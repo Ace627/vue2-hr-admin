@@ -8,7 +8,8 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper flex items-center">
           <!-- 用户头像 -->
-          <img :src="avatar" class="user-avatar" />
+          <img :src="avatar" class="user-avatar" v-if="avatar" />
+          <span v-else class="username flex items-center justify-center text-white">{{ name?.charAt(0) }}</span>
           <!-- 用户名 -->
           <span class="name">{{ name }}</span>
           <!-- icon 图标 -->
@@ -110,10 +111,15 @@ export default {
       margin-right: 16px;
 
       .avatar-wrapper {
-        .user-avatar {
+        .user-avatar,
+        .username {
           width: 40px;
           height: 40px;
           border-radius: 10px;
+        }
+        .username {
+          border-radius: 50%;
+          background-color: #04c9be;
         }
         .name {
           margin: 0 8px;
