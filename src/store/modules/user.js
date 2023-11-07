@@ -1,4 +1,4 @@
-import { login, logout, getUserInfo } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -45,15 +45,10 @@ const actions = {
   },
 
   /** 登出 */
-  async logout({ commit, state }) {
-    try {
-      await logout(state.token)
-      removeToken() // must remove  token  first
-      resetRouter()
-      commit('RESET_STATE')
-    } catch (error) {
-      return Promise.reject(error)
-    }
+  async logout({ commit }) {
+    removeToken() // 必须先清空 Cookie 的 Token 信息
+    resetRouter() // 重置路由信息
+    commit('RESET_STATE') // 重置 user 数据仓库
   },
 
   // remove token

@@ -1,14 +1,16 @@
 <template>
   <div class="navbar">
+    <!-- 侧栏伸缩菜单 -->
     <Hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
+    <!-- 面包屑导航 -->
     <Breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper flex items-center">
+      <el-dropdown class="avatar-container cursor-pointer" trigger="click">
+        <div class="avatar-wrapper flex justify-center items-center">
           <!-- 用户头像 -->
-          <img :src="avatar" class="user-avatar" v-if="avatar" />
+          <img :src="avatar" class="user-avatar" v-if="avatar" draggable="false" />
           <span v-else class="username flex items-center justify-center text-white">{{ name?.charAt(0) }}</span>
           <!-- 用户名 -->
           <span class="name">{{ name }}</span>
@@ -20,12 +22,13 @@
             <el-dropdown-item> 首页 </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/Ace627/vue2-hr-admin">
-            <el-dropdown-item>仓库地址</el-dropdown-item>
+            <el-dropdown-item>项目地址</el-dropdown-item>
           </a>
           <a target="_blank" href="https://apifox.com/apidoc/shared-e2644216-aad4-4529-a630-78f0631ab076/api-45197376">
             <el-dropdown-item>接口文档</el-dropdown-item>
           </a>
-          <el-dropdown-item divided @click.native="logout"> 退出登录 </el-dropdown-item>
+          <el-dropdown-item> 修改密码 </el-dropdown-item>
+          <el-dropdown-item @click.native="logout"> 退出登录 </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -47,9 +50,14 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
+
+    /** 退出登录 */
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      try {
+        await this.$confirm('确定注销并退出系统吗？', '系统提示', { type: 'warning', confirmButtonText: '确定', cancelButtonText: '取消' })
+        await this.$store.dispatch('user/logout')
+        this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      } catch (error) {}
     },
   },
 }
@@ -127,7 +135,6 @@ export default {
           font-weight: 500;
         }
         .el-icon-setting {
-          cursor: pointer;
           font-size: 20px;
         }
       }

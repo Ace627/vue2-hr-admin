@@ -7,11 +7,11 @@
         <!--登录表单-->
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules">
           <el-form-item prop="mobile">
-            <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
+            <el-input v-model="loginForm.mobile" placeholder="请输入手机号" prefix-icon="el-icon-user"></el-input>
           </el-form-item>
 
           <el-form-item prop="password">
-            <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
+            <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" show-password prefix-icon="el-icon-lock"></el-input>
           </el-form-item>
 
           <el-form-item prop="isAgree">
@@ -19,7 +19,10 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" class="w-full" @click="handleLogin">登录</el-button>
+            <el-button type="primary" class="w-full" @click="handleLogin" :loading="loading">
+              <span v-if="loading">登录中...</span>
+              <span v-else>登录</span>
+            </el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -33,6 +36,7 @@ export default {
   name: 'Login',
   data() {
     return {
+      loading: false,
       loginForm: {
         mobile: '13800000002',
         password: 'hm#qd@23!',
@@ -56,9 +60,11 @@ export default {
     async handleLogin() {
       try {
         await this.$refs.loginFormRef.validate()
+        this.loading = true
         await this.$store.dispatch('user/login', this.loginForm)
         this.$router.replace('/')
       } catch (error) {
+        this.loading = false
         console.log('error: ', error)
       }
     },
