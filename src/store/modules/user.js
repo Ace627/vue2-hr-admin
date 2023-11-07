@@ -4,7 +4,7 @@ import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
-    token: getToken(),
+    token: getToken(), // 从缓存中读取 Token 的初始值
     name: '',
     avatar: '',
   }
@@ -18,6 +18,7 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
+    setToken(data.token) // 持久化存储 Token
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -35,7 +36,6 @@ const actions = {
       const { mobile, password } = userInfo
       const { data } = await login({ mobile: mobile.trim(), password })
       commit('SET_TOKEN', data.token)
-      setToken(data.token)
     } catch (error) {
       return Promise.reject(error)
     }
