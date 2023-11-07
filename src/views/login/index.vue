@@ -5,6 +5,20 @@
       <h1>登录</h1>
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
+        <el-form>
+          <el-form-item>
+            <el-input place="请输入手机号"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input place="请输入密码"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-checkbox>用户平台使用协议</el-checkbox>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" class="w-full">登录</el-button>
+          </el-form-item>
+        </el-form>
       </el-card>
     </div>
   </div>
@@ -12,6 +26,9 @@
 <script>
 export default {
   name: 'Login',
+  data() {
+    return {}
+  },
 }
 </script>
 <style lang="scss">
