@@ -28,6 +28,19 @@ yarn dev
 │   └── settings.js            # 配置文件
 ```
 
+## 业务模块
+
+```bash
+|- approval          # 审批管理
+|- attentdance       # 考勤管理
+|- department        # 组织架构
+|- employee          # 员工管理
+|- permission        # 权限管理
+|- role              # 角色管理
+|- salary            # 薪资管理
+|- social            # 社保管理
+```
+
 ## 参考文献
 
 - [黑马前端-新版人力资源课程讲义](https://www.yuque.com/shuiruohanyu/agxcua)
