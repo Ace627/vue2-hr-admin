@@ -1,28 +1,30 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <Hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
-    <breadcrumb class="breadcrumb-container" />
+    <Breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
-          <i class="el-icon-caret-bottom" />
+        <div class="avatar-wrapper flex items-center">
+          <!-- 用户头像 -->
+          <img :src="avatar" class="user-avatar" />
+          <!-- 用户名 -->
+          <span class="name">{{ name }}</span>
+          <!-- icon 图标 -->
+          <i class="el-icon-setting" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item> Home </el-dropdown-item>
+            <el-dropdown-item> 首页 </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
+          <a target="_blank" href="https://github.com/Ace627/vue2-hr-admin">
+            <el-dropdown-item>仓库地址</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
+          <a target="_blank" href="https://apifox.com/apidoc/shared-e2644216-aad4-4529-a630-78f0631ab076/api-45197376">
+            <el-dropdown-item>接口文档</el-dropdown-item>
           </a>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">Log Out</span>
-          </el-dropdown-item>
+          <el-dropdown-item divided @click.native="logout"> 退出登录 </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -35,12 +37,10 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
-  components: {
-    Breadcrumb,
-    Hamburger,
-  },
+  name: 'Navbar',
+  components: { Breadcrumb, Hamburger },
   computed: {
-    ...mapGetters(['sidebar', 'avatar']),
+    ...mapGetters(['sidebar', 'avatar', 'name']),
   },
   methods: {
     toggleSideBar() {
@@ -107,25 +107,22 @@ export default {
     }
 
     .avatar-container {
-      margin-right: 30px;
+      margin-right: 16px;
 
       .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
         .user-avatar {
-          cursor: pointer;
           width: 40px;
           height: 40px;
           border-radius: 10px;
         }
-
-        .el-icon-caret-bottom {
+        .name {
+          margin: 0 8px;
+          font-size: 16px;
+          font-weight: 500;
+        }
+        .el-icon-setting {
           cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+          font-size: 20px;
         }
       }
     }
