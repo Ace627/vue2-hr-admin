@@ -36,7 +36,6 @@ const actions = {
   async getUserInfo({ commit }) {
     try {
       const { data } = await getUserInfo()
-      console.log('data: ', data)
       commit('SET_USER_INFO', data)
       return data
     } catch (error) {
