@@ -27,3 +27,8 @@ yarn dev
 │   └── permission.js          # 权限管理
 │   └── settings.js            # 配置文件
 ```
+
+## 参考文献
+
+- [黑马前端-新版人力资源课程讲义](https://www.yuque.com/shuiruohanyu/agxcua)
+- [黑马前端-新版人力资源接口文档](https://apifox.com/apidoc/shared-e2644216-aad4-4529-a630-78f0631ab076/api-45197376)
