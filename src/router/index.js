@@ -5,6 +5,14 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import departmentRouter from './modules/department' // 组织架构
+import approvalRouter from './modules/approval' // 审批管理
+import attendanceRouter from './modules/attendance' // 考勤管理
+import employeeRouter from './modules/employee' // 员工管理
+import permissionRouter from './modules/permission' // 权限管理
+import roleRouter from './modules/role' // 角色管理
+import salaryRouter from './modules/salary' // 工资管理
+import socialRouter from './modules/social' // 社保管理
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -60,6 +68,9 @@ export const constantRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true },
 ]
+
+// 动态路由
+export const asyncRoutes = [departmentRouter, roleRouter, employeeRouter, permissionRouter, attendanceRouter, approvalRouter, salaryRouter, socialRouter]
 
 const createRouter = () =>
   new Router({
