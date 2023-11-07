@@ -33,6 +33,9 @@ import socialRouter from './modules/social' // 社保管理
   }
  */
 
+// 动态路由
+export const asyncRoutes = [departmentRouter, roleRouter, employeeRouter, permissionRouter, attendanceRouter, approvalRouter, salaryRouter, socialRouter]
+
 /**
  * constantRoutes
  * a base page that does not have permission requirements
@@ -65,12 +68,11 @@ export const constantRoutes = [
     ],
   },
 
+  ...asyncRoutes,
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true },
 ]
-
-// 动态路由
-export const asyncRoutes = [departmentRouter, roleRouter, employeeRouter, permissionRouter, attendanceRouter, approvalRouter, salaryRouter, socialRouter]
 
 const createRouter = () =>
   new Router({
