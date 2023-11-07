@@ -34,8 +34,8 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: '',
-        password: '',
+        mobile: '13800000002',
+        password: 'hm#qd@23!',
         isAgree: true,
       },
       loginRules: {
@@ -56,6 +56,7 @@ export default {
     async handleLogin() {
       try {
         await this.$refs.loginFormRef.validate()
+        await this.$store.dispatch('user/login', this.loginForm)
       } catch (error) {
         console.log('error: ', error)
       }

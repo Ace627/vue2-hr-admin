@@ -29,20 +29,16 @@ const mutations = {
 
 const actions = {
   /** 登录 */
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password })
-        .then(response => {
-          const { data } = response
-          commit('SET_TOKEN', data.token)
-          setToken(data.token)
-          resolve()
-        })
-        .catch(error => {
-          reject(error)
-        })
-    })
+  async login({ commit }, userInfo) {
+    try {
+      console.log('userInfo: ', userInfo)
+      const { mobile, password } = userInfo
+      const { data } = await login({ mobile: mobile.trim(), password })
+      commit('SET_TOKEN', data.token)
+      setToken(data.token)
+    } catch (error) {
+      return Promise.reject(error)
+    }
   },
 
   /** 获取用户信息 */
@@ -60,19 +56,15 @@ const actions = {
   },
 
   /** 登出 */
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token)
-        .then(() => {
-          removeToken() // must remove  token  first
-          resetRouter()
-          commit('RESET_STATE')
-          resolve()
-        })
-        .catch(error => {
-          reject(error)
-        })
-    })
+  async logout({ commit, state }) {
+    try {
+      await logout(state.token)
+      removeToken() // must remove  token  first
+      resetRouter()
+      commit('RESET_STATE')
+    } catch (error) {
+      return Promise.reject(error)
+    }
   },
 
   // remove token
