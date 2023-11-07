@@ -5,8 +5,8 @@
       <!-- 自定义树节点的内容，参数为 { node, data } -->
       <template v-slot="{ data }">
         <el-row type="flex" justify="space-between" align="middle" style="width: 100%; height: 40px">
-          <el-col>{{ data.name }}</el-col>
-          <el-col :span="4">
+          <el-col :sapn="8">{{ data.name }}</el-col>
+          <el-col :span="6">
             <span class="tree-manager">{{ data.managerName }}</span>
             <!-- $event 实参 表示类型 -->
             <el-dropdown>
@@ -31,6 +31,7 @@
 
 <script>
 import { getDepartment } from '@/api/department'
+import { transListToTreeData } from '@/utils'
 
 export default {
   name: 'Department',
@@ -50,7 +51,7 @@ export default {
     /** 获取部门列表 */
     async getDepartment() {
       const { data } = await getDepartment()
-      this.depts = data
+      this.depts = transListToTreeData(data, 0)
       console.log('this.depts: ', this.depts)
     },
   },
@@ -66,7 +67,7 @@ export default {
 
   .tree-manager {
     display: inline-block;
-    width: 50px;
+    width: 80px;
     margin: 10px;
   }
 }
