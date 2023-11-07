@@ -61,7 +61,9 @@ div:focus {
   }
 }
 
-// main-container global css
-.app-container {
-  padding: 20px;
+/* 业务页面几乎都应该在根元素上挂载 class="app-content"，以保持页面美观 */
+.app-content {
+  position: relative;
+  width: 100%;
+  padding: 16px;
 }
