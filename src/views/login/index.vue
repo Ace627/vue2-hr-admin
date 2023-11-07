@@ -9,14 +9,17 @@
           <el-form-item prop="mobile">
             <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
           </el-form-item>
+
           <el-form-item prop="password">
             <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
           </el-form-item>
-          <el-form-item>
+
+          <el-form-item prop="isAgree">
             <el-checkbox v-model="loginForm.isAgree">用户平台使用协议</el-checkbox>
           </el-form-item>
+
           <el-form-item>
-            <el-button type="primary" class="w-full">登录</el-button>
+            <el-button type="primary" class="w-full" @click="handleLogin">登录</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -24,6 +27,8 @@
   </div>
 </template>
 <script>
+import { CheckBoolean } from '@/utils/validator'
+
 export default {
   name: 'Login',
   data() {
@@ -42,8 +47,19 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 6, max: 16, message: '密码长度应该在 6~16 位之间', trigger: 'blur' },
         ],
+        isAgree: [{ validator: CheckBoolean('您必须勾选用户的使用协议') }],
       },
     }
+  },
+
+  methods: {
+    async handleLogin() {
+      try {
+        await this.$refs.loginFormRef.validate()
+      } catch (error) {
+        console.log('error: ', error)
+      }
+    },
   },
 }
 </script>
