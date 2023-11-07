@@ -1,19 +1,19 @@
 <template>
   <div class="login-container">
-    <div class="logo" />
+    <div class="logo"></div>
     <div class="form">
       <h1>登录</h1>
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
-        <el-form>
-          <el-form-item>
-            <el-input place="请输入手机号"></el-input>
+        <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules">
+          <el-form-item prop="mobile">
+            <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" show-password></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input place="请输入密码"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-checkbox>用户平台使用协议</el-checkbox>
+            <el-checkbox v-model="loginForm.isAgree">用户平台使用协议</el-checkbox>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" class="w-full">登录</el-button>
@@ -27,7 +27,23 @@
 export default {
   name: 'Login',
   data() {
-    return {}
+    return {
+      loginForm: {
+        mobile: '',
+        password: '',
+        isAgree: true,
+      },
+      loginRules: {
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { pattern: /^(?:(?:\+|00)86)?1\d{10}$/, message: '手机号码格式错误', trigger: 'blur' },
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 16, message: '密码长度应该在 6~16 位之间', trigger: 'blur' },
+        ],
+      },
+    }
   },
 }
 </script>
@@ -45,19 +61,6 @@ export default {
     align-items: flex-end;
     justify-content: center;
     padding: 0 100px;
-    // .icon {
-    //   background: url('../../assets/common/logo.png') no-repeat 70px center / contain;
-    //   width: 300px;
-    //   height: 50px;
-    //   margin-bottom: 50px;
-    // }
-    p {
-      color: #fff;
-      font-size: 18px;
-      margin-top: 20px;
-      width: 300px;
-      text-align: center;
-    }
   }
   .form {
     flex: 2;
