@@ -57,6 +57,7 @@ export default {
       try {
         await this.$refs.loginFormRef.validate()
         await this.$store.dispatch('user/login', this.loginForm)
+        this.$router.replace('/')
       } catch (error) {
         console.log('error: ', error)
       }

@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getUserInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -18,7 +18,7 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
-    setToken(data.token) // 持久化存储 Token
+    setToken(token) // 持久化存储 Token
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -35,16 +35,16 @@ const actions = {
       console.log('userInfo: ', userInfo)
       const { mobile, password } = userInfo
       const { data } = await login({ mobile: mobile.trim(), password })
-      commit('SET_TOKEN', data.token)
+      commit('SET_TOKEN', data)
     } catch (error) {
       return Promise.reject(error)
     }
   },
 
   /** 获取用户信息 */
-  async getInfo({ commit, state }) {
+  async getUserInfo({ commit, state }) {
     try {
-      const { data } = await getInfo(state.token)
+      const { data } = await getUserInfo(state.token)
       if (!data) return Promise.reject(new Error('Verification failed, please Login again.'))
       const { name, avatar } = data
       commit('SET_NAME', name)
