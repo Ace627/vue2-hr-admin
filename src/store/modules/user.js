@@ -5,8 +5,7 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(), // 从缓存中读取 Token 的初始值
-    name: '',
-    avatar: '',
+    userInfo: {}, // 存储用户的基本资料
   }
 }
 
@@ -20,11 +19,8 @@ const mutations = {
     state.token = token
     setToken(token) // 持久化存储 Token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  SET_USER_INFO(state, userInfo) {
+    state.userInfo = userInfo
   },
 }
 
@@ -36,14 +32,12 @@ const actions = {
     commit('SET_TOKEN', data)
   },
 
-  /** 获取用户信息 */
-  async getUserInfo({ commit, state }) {
+  /** 获取用户基本资料 */
+  async getUserInfo({ commit }) {
     try {
-      const { data } = await getUserInfo(state.token)
-      if (!data) return Promise.reject(new Error('Verification failed, please Login again.'))
-      const { username, avatar } = data
-      commit('SET_NAME', username)
-      commit('SET_AVATAR', avatar)
+      const { data } = await getUserInfo()
+      console.log('data: ', data)
+      commit('SET_USER_INFO', data)
       return data
     } catch (error) {
       return Promise.reject(error)

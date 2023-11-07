@@ -1,12 +1,12 @@
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
-import NProgress from 'nprogress' // progress bar
-import { getToken } from '@/utils/auth' // get token from cookie
+import NProgress from 'nprogress'
+import { getToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // 去除进度条加载时右侧的小圆圈
-const whiteList = ['/login'] // 路由白名单
+const whiteList = ['/login'] // 免登录白名单
 
 /** 路由全局前置守卫 */
 router.beforeEach(async (to, from, next) => {
@@ -16,29 +16,23 @@ router.beforeEach(async (to, from, next) => {
 
   if (hasToken) {
     if (to.path === '/login') {
-      next({ path: '/' }) // 如果已经登录，且访问登录页，则重定向到首页
-      NProgress.done()
+      next({ path: '/', replace: true }) // 如果已经登录，并准备进入 Login 页面，则重定向到主页
     } else {
-      const hasGetUserInfo = store.getters.name
-      if (hasGetUserInfo) {
+      /** 检查用户是否已获得其权限角色 */
+      if (store.getters.userId) {
         next()
       } else {
         try {
-          // get user info
           await store.dispatch('user/getUserInfo')
-
           next()
         } catch (error) {
-          // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
-          // Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
+          await store.dispatch('user/resetToken') // 重置 Token
+          next(`/login?redirect=${to.path}`) // 重定向至登录页
         }
       }
     }
   } else {
-    /* 没有 Token 没有登录的情况下 */
-    /** 如果在白名单 直接放行 | 反之代表页面需要权限 重定向到登录页 */
+    /** 如果没有 Token，但在免登录的白名单中，则直接进入；否则将被重定向到登录页面 */
     whiteList.includes(to.path) ? next() : next(`/login?redirect=${to.path}`)
   }
 })
