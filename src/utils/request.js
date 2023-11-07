@@ -20,7 +20,7 @@ request.interceptors.request.use(
     // 请求发送之前执行
     NProgress.start()
     const token = store.getters.token
-    if (token) config.headers['Authorization'] = token
+    if (token) config.headers['Authorization'] = `Bearer ${token}`
     return config
   },
   error => {

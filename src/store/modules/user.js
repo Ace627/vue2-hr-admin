@@ -31,14 +31,9 @@ const mutations = {
 const actions = {
   /** 登录 */
   async login({ commit }, userInfo) {
-    try {
-      console.log('userInfo: ', userInfo)
-      const { mobile, password } = userInfo
-      const { data } = await login({ mobile: mobile.trim(), password })
-      commit('SET_TOKEN', data)
-    } catch (error) {
-      return Promise.reject(error)
-    }
+    const { mobile, password } = userInfo
+    const { data } = await login({ mobile: mobile.trim(), password })
+    commit('SET_TOKEN', data)
   },
 
   /** 获取用户信息 */
@@ -46,8 +41,8 @@ const actions = {
     try {
       const { data } = await getUserInfo(state.token)
       if (!data) return Promise.reject(new Error('Verification failed, please Login again.'))
-      const { name, avatar } = data
-      commit('SET_NAME', name)
+      const { username, avatar } = data
+      commit('SET_NAME', username)
       commit('SET_AVATAR', avatar)
       return data
     } catch (error) {
