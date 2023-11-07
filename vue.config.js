@@ -8,6 +8,10 @@ function resolve(dir) {
 
 const name = defaultSettings.title || 'vue Admin Template' // page title
 
+/** 来加载所有 VUE_APP_ 前缀的环境变量 */
+const env_config = process.env
+const { VUE_APP_BASE_URL, VUE_APP_BASE_API } = env_config
+
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
@@ -30,11 +34,15 @@ module.exports = {
   assetsDir: 'static',
   productionSourceMap: false,
   devServer: {
+    /** 指定开发服务器端口 */
     port: port,
     open: false,
-    overlay: {
-      warnings: false,
-      errors: true,
+    overlay: { warnings: false, errors: true },
+    /** 反向代理配置（主要是开发时用来解决跨域问题） */
+    proxy: {
+      [VUE_APP_BASE_API]: {
+        target: VUE_APP_BASE_URL,
+      },
     },
     before: require('./mock/mock-server.js'),
   },

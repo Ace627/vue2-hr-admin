@@ -1,12 +1,7 @@
 import request from '@/utils/request'
 
-export function login(data) {
-  return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
-    data,
-  })
-}
+/** 登录 */
+export const login = data => request.post('/sys/login', data)
 
 export function getInfo(token) {
   return request({
