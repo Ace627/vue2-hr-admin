@@ -1,7 +1,8 @@
 <template>
   <div class="app-content">
     <!-- 展示树形结构 -->
-    <el-tree default-expand-all :data="depts" :props="defaultProps">
+    <!-- expand-on-click-node=false 点击树不可以折叠，只有点击折叠展开图标才可以 -->
+    <el-tree default-expand-all :expand-on-click-node="false" :data="depts" :props="defaultProps">
       <!-- 自定义树节点的内容，参数为 { node, data } -->
       <template v-slot="{ data }">
         <el-row type="flex" justify="space-between" align="middle" style="width: 100%; height: 40px">
@@ -9,7 +10,7 @@
           <el-col :span="6">
             <span class="tree-manager">{{ data.managerName }}</span>
             <!-- $event 实参 表示类型 -->
-            <el-dropdown>
+            <el-dropdown @command="operateDept($event, data.id)">
               <!-- 显示区域内容 -->
               <span class="el-dropdown-link">
                 <span>操作</span>
@@ -26,16 +27,20 @@
         </el-row>
       </template>
     </el-tree>
+
+    <!-- 使用 sync 修饰符，可以监听子组件传过来的 update:属性名 的事件，直接将父组件的值进行修改 -->
+    <UpdateDepartment :showDialog.sync="showDialog" :currentNodeId="currentNodeId" @updateDepartment="getDepartment" />
   </div>
 </template>
 
 <script>
 import { getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
+import UpdateDepartment from './components/UpdateDepartment'
 
 export default {
   name: 'Department',
-  components: {},
+  components: { UpdateDepartment },
   data() {
     return {
       // 树状图的展示数据
@@ -45,6 +50,8 @@ export default {
         children: 'children', // 指定子树为节点对象的某个属性值
         label: 'name', // 指定节点标签为节点对象的某个属性值
       },
+      showDialog: false, // 编辑/新增/查看弹框是否展示
+      currentNodeId: null, // 存储当前点击的id
     }
   },
   methods: {
@@ -53,6 +60,15 @@ export default {
       const { data } = await getDepartment()
       this.depts = transListToTreeData(data, 0)
       console.log('this.depts: ', this.depts)
+    },
+
+    /** 获取下拉操作的指令 */
+    operateDept(command, id) {
+      console.log('command: ', command)
+      if (command === 'add') {
+        this.currentNodeId = id
+      }
+      this.showDialog = true
     },
   },
   created() {
