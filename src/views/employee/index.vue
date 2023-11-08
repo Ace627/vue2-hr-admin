@@ -1,8 +1,17 @@
 <template>
   <div class="app-content">
     <div class="left">
-      <el-input class="mb-16" type="text" prefix-icon="el-icon-search" size="small" placeholder="请输入部门名称" />
-      <!-- 树形组件 -->
+      <el-input class="mb-16" type="text" v-model="deptName" prefix-icon="el-icon-search" size="small" placeholder="请输入部门名称" clearable />
+      <el-tree
+        default-expand-all
+        ref="treeRef"
+        :filter-node-method="filterNode"
+        :expand-on-click-node="false"
+        :data="depts"
+        :props="defaultProps"
+        highlight-current
+        @node-click="handleNodeClick"
+      ></el-tree>
     </div>
 
     <div class="right">
@@ -18,14 +27,51 @@
 </template>
 
 <script>
+import { getDepartment } from '@/api/department'
+import { transListToTreeData } from '@/utils'
+
 export default {
   name: 'Employee',
   components: {},
   data() {
-    return {}
+    return {
+      depts: [],
+      defaultProps: { children: 'children', label: 'name' },
+      // 部门名称
+      deptName: undefined,
+      // 查询参数
+      queryParams: {},
+    }
   },
-  methods: {},
-  mounted() {},
+  methods: {
+    /** 获取部门列表 */
+    async getDepartment() {
+      const { data } = await getDepartment()
+      this.depts = transListToTreeData(data, 0)
+      console.log('this.depts: ', this.depts)
+    },
+
+    /** 节点单击事件 */
+    handleNodeClick(data) {
+      console.log('data: ', data)
+    },
+
+    /** 筛选节点 */
+    filterNode(value, data) {
+      if (!value) return true
+      return data.name.includes(value)
+    },
+  },
+  watch: {
+    /** 根据名称筛选部门树 */
+    deptName(value) {
+      this.$refs.treeRef.filter(value)
+    },
+  },
+
+  created() {
+    this.getDepartment() // 获取部门列表
+  },
 }
 </script>
 
