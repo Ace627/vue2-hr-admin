@@ -11,7 +11,7 @@
         <el-table-column align="center" width="200" label="角色名称" prop="name" show-overflow-tooltip />
         <el-table-column align="center" width="200" label="状态">
           <template v-slot="{ row }">
-            <el-switch v-model="row.state" disabled :active-value="1" :inactive-value="0" />
+            <el-switch v-model="row.state" :active-value="1" :inactive-value="0" @change="handleStatusChange(row)" />
           </template>
         </el-table-column>
         <el-table-column align="center" label="描述" prop="description" show-overflow-tooltip />
@@ -146,6 +146,19 @@ export default {
       }
       this.getRoleList()
       this.$message.success(`随机数据添加成功`)
+    },
+
+    /** 角色状态修改 */
+    async handleStatusChange(record) {
+      try {
+        const text = record.state === 1 ? '启用' : '停用'
+        await this.$confirm(`确认要${text}《${record.name}》角色吗？`, '系统提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+        await updateRole(record)
+        this.$message.success(`角色《${record.name}》已成功${text}`)
+      } catch (error) {
+        console.log('error: ', error)
+        record.state = record.state === 1 ? 0 : 1
+      }
     },
 
     /** 删除角色 */
