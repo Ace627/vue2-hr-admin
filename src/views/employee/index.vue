@@ -23,17 +23,18 @@
       </el-row>
       <!-- 表格组件 -->
 
-      <el-table>
+      <el-table :data="list" highlight-current-row>
         <el-table-column align="center" label="头像" />
-        <el-table-column label="姓名" />
-        <el-table-column label="手机号" sortable />
-        <el-table-column label="工号" sortable />
-        <el-table-column label="聘用形式" />
-        <el-table-column label="部门" />
-        <el-table-column label="入职时间" sortable />
-        <el-table-column label="操作" width="280px">
+        <el-table-column align="center" label="姓名" prop="username" min-width="120" show-overflow-tooltip />
+        <el-table-column align="center" label="手机号" sortable prop="mobile" min-width="110" show-overflow-tooltip />
+        <el-table-column align="center" label="工号" sortable prop="workNumber" min-width="110" show-overflow-tooltip />
+        <el-table-column align="center" label="聘用形式" prop="formOfEmployment" />
+        <el-table-column align="center" label="部门名称" prop="departmentName" min-width="110" show-overflow-tooltip />
+        <el-table-column align="center" label="入职时间" sortable prop="timeOfEntry" min-width="100" />
+        <el-table-column align="center" label="操作" width="280px">
           <template>
             <el-link type="primary" icon="el-icon-edit">查看</el-link>
+            <el-divider direction="vertical"></el-divider>
             <el-link type="warning" icon="el-icon-edit">角色</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-popconfirm :title="`是否确认删除角色 `">
@@ -49,8 +50,8 @@
           :layout="layout"
           :page-sizes="pageSizeList"
           :total="total"
-          :current-page="pageNo"
-          :page-size="pageSize"
+          :current-page="queryParams.page"
+          :page-size="queryParams.pagesize"
           @current-change="changePageNo"
           @size-change="changePageSize"
         />
@@ -61,6 +62,7 @@
 
 <script>
 import { getDepartment } from '@/api/department'
+import { getEmployeeList } from '@/api/employee'
 import { transListToTreeData } from '@/utils'
 
 export default {
@@ -69,9 +71,8 @@ export default {
   data() {
     return {
       depts: [],
+      list: [], // 存储员工列表
       defaultProps: { children: 'children', label: 'name' },
-      pageNo: 1, // 当前页数
-      pageSize: 10, // 每页显示条目个数
       total: 0, // 总条目数
       pageSizeList: [10, 20, 30, 40, 50],
       layout: 'total, sizes, prev, pager, next, jumper', // 组件布局，子组件名用逗号分隔
@@ -79,7 +80,10 @@ export default {
       deptName: undefined,
       // 查询参数
       queryParams: {
-        departmentId: undefined,
+        page: 1, // 当前页码数
+        pagesize: 10, // 当前页面需要的数据条数
+        keyword: undefined, // 根据名字模糊查询
+        departmentId: undefined, // 部门 id,根据部门查询当前部门及子部门的用户
       },
     }
   },
@@ -92,14 +96,14 @@ export default {
       // 设置选中节点 树组件渲染是异步的 等到更新完毕
       this.$nextTick(() => {
         this.$refs.treeRef.setCurrentKey(this.queryParams.departmentId)
+        this.getEmployeeList()
       })
     },
 
     /** 节点单击事件 */
     handleNodeClick(data) {
-      console.log('data: ', data)
       this.queryParams.departmentId = data.id
-      console.log('this.queryParams.departmentId: ', this.queryParams.departmentId)
+      this.getEmployeeList()
     },
 
     /** 筛选节点 */
@@ -108,8 +112,25 @@ export default {
       return data.name.includes(value)
     },
 
-    changePageNo() {},
-    changePageSize() {},
+    /** 获取员工列表的方法 */
+    async getEmployeeList() {
+      const { data } = await getEmployeeList(this.queryParams)
+      this.list = data.rows
+      this.total = data.total
+    },
+
+    /** currentPage 改变时会触发 */
+    changePageNo(page) {
+      this.queryParams.page = page
+      this.getEmployeeList()
+    },
+
+    /** pageSize 改变时会触发 */
+    changePageSize(pagesize) {
+      this.queryParams.page = 1
+      this.queryParams.pagesize = pagesize
+      this.getEmployeeList()
+    },
   },
   watch: {
     /** 根据名称筛选部门树 */
