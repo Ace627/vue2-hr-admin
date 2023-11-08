@@ -62,6 +62,7 @@ export default {
         await this.$refs.loginFormRef.validate()
         this.loading = true
         await this.$store.dispatch('user/login', this.loginForm)
+        this.loading = false
         this.$router.replace('/')
       } catch (error) {
         this.loading = false

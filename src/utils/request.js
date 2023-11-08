@@ -17,14 +17,14 @@ const request = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   // 请求发送之前执行
-  config => {
+  (config) => {
     NProgress.start()
     const token = store.getters.token
     if (token) config.headers['Authorization'] = `Bearer ${token}` //  让每个请求携带自定义 token 请根据实际情况自行修改
     return config
   },
   // 请求发送失败执行
-  error => {
+  (error) => {
     NProgress.done()
     console.log(error) // for debug
     return Promise.reject(error)
@@ -33,7 +33,7 @@ request.interceptors.request.use(
 
 // 响应拦截器
 request.interceptors.response.use(
-  response => {
+  (response) => {
     NProgress.done()
     const api_data = response.data
     // 未设置状态码则默认成功状态
@@ -61,15 +61,13 @@ request.interceptors.response.use(
       return Promise.reject(new Error(api_data.message))
     }
   },
-  error => {
+  (error) => {
     NProgress.done()
     console.log('err' + error) // for debug
-    const status_code = error.response.status
     let message = error.message || '未知错误'
     if (message.includes('Network Error')) message = '后端接口连接异常'
     if (message.includes('timeout')) message = '系统接口请求超时'
     if (message.includes('Request failed with status code')) message = '系统接口 ' + message.substr(message.length - 3) + ' 异常'
-    if (status_code === 401) message = '无效的会话，或者会话已过期，请重新登录。'
     Message({ message, type: 'error', duration: 5 * 1000 })
     return Promise.reject(error)
   },

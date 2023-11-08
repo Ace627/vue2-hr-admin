@@ -29,12 +29,12 @@
     </el-tree>
 
     <!-- 使用 sync 修饰符，可以监听子组件传过来的 update:属性名 的事件，直接将父组件的值进行修改 -->
-    <UpdateDepartment :showDialog.sync="showDialog" :currentNodeId="currentNodeId" @updateDepartment="getDepartment" />
+    <UpdateDepartment ref="updateDepartmentRef" :showDialog.sync="showDialog" :currentNodeId="currentNodeId" @updateDepartment="getDepartment" />
   </div>
 </template>
 
 <script>
-import { getDepartment } from '@/api/department'
+import { getDepartment, delDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import UpdateDepartment from './components/UpdateDepartment'
 
@@ -62,13 +62,33 @@ export default {
       console.log('this.depts: ', this.depts)
     },
 
+    /** 删除部门详情 */
+    async delDepartment(id) {
+      try {
+        await this.$confirm('此操作将永久删除该文件, 是否继续?', '系统提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+        await delDepartment(id)
+        await this.getDepartment()
+        this.$message.success('删除部门成功')
+      } catch (error) {
+        console.log('error: ', error)
+      }
+    },
+
     /** 获取下拉操作的指令 */
     operateDept(command, id) {
-      console.log('command: ', command)
       if (command === 'add') {
+        // 新增部门
         this.currentNodeId = id
+        this.showDialog = true
+      } else if (command === 'del') {
+        // 删除部门
+        this.delDepartment(id)
+      } else if (command === 'edit') {
+        // 编辑部门
+        this.currentNodeId = id
+        this.showDialog = true
+        this.$nextTick(() => this.$refs.updateDepartmentRef.getDepartmentDetail())
       }
-      this.showDialog = true
     },
   },
   created() {
