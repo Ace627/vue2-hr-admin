@@ -10,3 +10,6 @@ export const getEmployeeList = (params) => request.get(`/sys/user`, { params })
 
 /** 批量-导出员工 Excel */
 export const exportEmployee = () => request.get(`/sys/user/export`, { responseType: 'blob' })
+
+/** 下载导入员工模板 Excel */
+export const getExportTemplate = () => request.get(`/sys/user/import/template`, { responseType: 'blob' })
