@@ -24,16 +24,27 @@
       <!-- 表格组件 -->
 
       <el-table :data="list" highlight-current-row>
-        <el-table-column align="center" label="头像" />
+        <el-table-column align="center" label="头像">
+          <template v-slot="{ row }">
+            <el-avatar v-if="row.staffPhoto" :src="row.staffPhoto" :size="30"></el-avatar>
+            <el-avatar v-else :size="30">{{ row.username?.charAt(0) }}</el-avatar>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="姓名" prop="username" min-width="120" show-overflow-tooltip />
         <el-table-column align="center" label="手机号" sortable prop="mobile" min-width="110" show-overflow-tooltip />
         <el-table-column align="center" label="工号" sortable prop="workNumber" min-width="110" show-overflow-tooltip />
-        <el-table-column align="center" label="聘用形式" prop="formOfEmployment" />
+        <el-table-column align="center" label="聘用形式">
+          <template v-slot="{ row }">
+            <span v-if="row.formOfEmployment === 1">正式</span>
+            <span v-else-if="row.formOfEmployment === 2">非正式</span>
+            <span v-else>无</span>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="部门名称" prop="departmentName" min-width="110" show-overflow-tooltip />
         <el-table-column align="center" label="入职时间" sortable prop="timeOfEntry" min-width="100" />
-        <el-table-column align="center" label="操作" width="280px">
+        <el-table-column align="center" label="操作" min-width="200">
           <template>
-            <el-link type="primary" icon="el-icon-edit">查看</el-link>
+            <el-link type="primary" icon="el-icon-warning-outline">查看</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-link type="warning" icon="el-icon-edit">角色</el-link>
             <el-divider direction="vertical"></el-divider>
