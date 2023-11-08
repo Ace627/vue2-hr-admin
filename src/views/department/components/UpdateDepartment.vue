@@ -93,6 +93,7 @@ export default {
     onClose() {
       if (this.deptForm.loading) return void 0
       this.$refs.deptFormRef.resetFields() // 对整个表单进行重置，将所有字段值重置为初始值并移除校验结果
+      this.roleForm = { name: '', description: '', state: 0 }
       this.initDeptForm()
       this.$emit('update:showDialog', false)
     },

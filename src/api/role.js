@@ -16,4 +16,4 @@ export const delRole = (id) => request.delete(`/sys/role/${id}`)
 export const getRoleDetail = (id) => request(`/sys/role/${id}`)
 
 /** 修改角色详情 */
-export const updateRoel = (data) => request.put(`/sys/role/${data.id}`, data)
+export const updateRole = (data) => request.put(`/sys/role/${data.id}`, data)

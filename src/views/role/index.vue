@@ -16,7 +16,7 @@
         <el-table-column align="center" label="描述" prop="description" show-overflow-tooltip />
         <el-table-column align="center" label="操作">
           <template v-slot="{ row }">
-            <el-link type="primary">修改</el-link>
+            <el-link type="primary" @click="updateRole(row)">修改</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-link type="primary" @click="delRole(row)">删除</el-link>
           </template>
@@ -37,7 +37,7 @@
       </div>
     </el-card>
 
-    <el-dialog width="500px" title="新增角色" :visible.sync="showDialog" :close-on-click-modal="false" :before-close="onClose">
+    <el-dialog width="500px" :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false" :before-close="onClose">
       <el-form label-width="80px" size="mini" :model="roleForm" ref="roleFormRef" :rules="roleFormRules">
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="roleForm.name" placeholder="角色名称不能为空" />
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { getRoleList, addRole, delRole } from '@/api/role'
+import { getRoleList, addRole, delRole, getRoleDetail, updateRole } from '@/api/role'
 
 export default {
   name: 'Role',
@@ -83,6 +83,11 @@ export default {
         description: [{ required: true, message: '角色描述不能为空', trigger: 'blur' }],
       },
     }
+  },
+  computed: {
+    dialogTitle() {
+      return this.roleForm.id ? '编辑角色' : '新增角色'
+    },
   },
   methods: {
     /** 获取-分页查询角色列表 */
@@ -116,9 +121,9 @@ export default {
     async submitRoleForm() {
       try {
         await this.$refs.roleFormRef.validate()
-        await addRole(this.roleForm)
+        this.roleForm.id ? await updateRole(this.roleForm) : await addRole(this.roleForm)
         this.getRoleList()
-        this.$message.success(`角色新增成功`)
+        this.$message.success(`${this.dialogTitle}成功`)
         this.onClose()
       } catch (error) {
         console.log('error: ', error)
@@ -140,13 +145,30 @@ export default {
     /** 删除角色 */
     async delRole(record) {
       try {
+        console.log(this.list.length)
+        if (this.list.length === 1 && this.pageNo > 1) this.pageNo--
         await this.$confirm(`是否确认删除角色 ${record.name}`, '系统提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
         await delRole(record.id)
+        this.getRoleList()
         this.$message.success(`角色删除成功`)
       } catch (error) {
         console.log('error: ', error)
       }
     },
+
+    /** 点击修改按钮的回调 */
+    async updateRole(record) {
+      const { data } = await getRoleDetail(record.id)
+      this.roleForm = data
+      this.showDialog = true
+      console.log('data: ', data)
+    },
+
+    // /** 获取角色详情 */
+    // async getRoleDetail(record) {
+    //   const {data} = await getRoleDetail(record.id)
+    //   console.log('data: ', data);
+    // },
   },
   created() {
     this.getRoleList() // 获取-分页查询角色列表
