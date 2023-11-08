@@ -65,7 +65,7 @@ export default {
     /** 删除部门详情 */
     async delDepartment(id) {
       try {
-        await this.$confirm('此操作将永久删除该文件, 是否继续?', '系统提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+        await this.$confirm('此操作将永久删除该部门, 是否继续?', '系统提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
         await delDepartment(id)
         await this.getDepartment()
         this.$message.success('删除部门成功')
