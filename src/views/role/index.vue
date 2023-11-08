@@ -17,10 +17,10 @@
         <el-table-column align="center" label="描述" prop="description" show-overflow-tooltip />
         <el-table-column align="center" label="操作">
           <template v-slot="{ row }">
-            <el-link type="primary" @click="openRoleDialog(row)">修改</el-link>
+            <el-link type="warning" @click="openRoleDialog(row)" icon="el-icon-edit">修改</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="delRole(row)">
-              <el-link type="primary" slot="reference">删除</el-link>
+              <el-link type="danger" slot="reference" icon="el-icon-delete">删除</el-link>
             </el-popconfirm>
           </template>
         </el-table-column>
