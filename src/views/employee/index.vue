@@ -1,5 +1,6 @@
 <template>
   <div class="app-content">
+    <!-- 部门数据 -->
     <div class="left">
       <el-input class="mb-16" type="text" v-model="deptName" prefix-icon="el-icon-search" size="small" placeholder="请输入部门名称" clearable />
       <el-tree
@@ -16,12 +17,22 @@
     </div>
 
     <div class="right">
+      <!-- 员工筛选表单 -->
+      <el-form :model="queryParams" ref="queryFormRef" size="small" inline label-width="68px">
+        <el-form-item label="用户名称" prop="userName">
+          <el-input v-model="queryParams.keyword" placeholder="请输入用户名称" clearable style="width: 240px" @clear="handleQuery" @keyup.enter.native="handleQuery" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+
       <el-row class="opeate-tools" type="flex" justify="start">
         <el-button plain size="small" type="primary" icon="el-icon-plus">新增</el-button>
         <el-button plain size="small" icon="el-icon-upload2" type="info">导入</el-button>
         <el-button plain size="small" icon="el-icon-download" type="warning">导出</el-button>
       </el-row>
-      <!-- 表格组件 -->
 
       <el-table :data="list" highlight-current-row>
         <el-table-column align="center" label="头像">
@@ -103,7 +114,8 @@ export default {
     async getDepartment() {
       const { data } = await getDepartment()
       this.depts = transListToTreeData(data, 0)
-      this.queryParams.departmentId = this.depts[0].id
+      // this.queryParams.departmentId = this.depts[0].id
+      this.queryParams.departmentId = this.depts[0].children[0].id
       // 设置选中节点 树组件渲染是异步的 等到更新完毕
       this.$nextTick(() => {
         this.$refs.treeRef.setCurrentKey(this.queryParams.departmentId)
@@ -128,6 +140,22 @@ export default {
       const { data } = await getEmployeeList(this.queryParams)
       this.list = data.rows
       this.total = data.total
+    },
+
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.page = 1
+      this.getEmployeeList()
+    },
+
+    /** 重置按钮操作 */
+    resetQuery() {
+      for (const key in this.queryParams) this.queryParams[key] = undefined
+      this.queryParams.page = 1
+      this.queryParams.pagesize = 10
+      // this.queryParams.departmentId = this.depts[0].id
+      this.queryParams.departmentId = this.depts[0].children[0].id
+      this.handleQuery()
     },
 
     /** currentPage 改变时会触发 */

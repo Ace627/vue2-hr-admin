@@ -11,7 +11,7 @@ NProgress.configure({ showSpinner: false })
 const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // 将自动加在 url 前面，除非 url 是一个绝对 URL | url = base url + request url baseURL
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000, // timeout 指定请求超时的毫秒数(0 表示无超时时间)，如果请求花费了超过 timeout 的时间，请求将被中断
+  timeout: Number(process.env.VUE_APP_REQUEST_TIMEOUT) || 6000, // timeout 指定请求超时的毫秒数(0 表示无超时时间)，如果请求花费了超过 timeout 的时间，请求将被中断
 })
 
 // 请求拦截器
