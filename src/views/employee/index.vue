@@ -57,12 +57,12 @@
         <el-table-column align="center" label="部门名称" prop="departmentName" min-width="110" show-overflow-tooltip />
         <el-table-column align="center" label="入职时间" sortable prop="timeOfEntry" min-width="100" />
         <el-table-column align="center" label="操作" min-width="200">
-          <template>
+          <template v-slot="{ row }">
             <el-link type="primary" icon="el-icon-warning-outline">查看</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-link type="warning" icon="el-icon-edit">角色</el-link>
             <el-divider direction="vertical"></el-divider>
-            <el-popconfirm :title="`是否确认删除角色 `">
+            <el-popconfirm :title="`是否确认删除用户 ${row.username}`" @confirm="delEmployee(row)">
               <el-link type="danger" slot="reference" icon="el-icon-delete">删除</el-link>
             </el-popconfirm>
           </template>
@@ -90,7 +90,7 @@
 <script>
 import FileSaver from 'file-saver'
 import { getDepartment } from '@/api/department'
-import { getEmployeeList, exportEmployee } from '@/api/employee'
+import { getEmployeeList, exportEmployee, delEmployee } from '@/api/employee'
 import { transListToTreeData } from '@/utils'
 import ImportExcelVue from './components/ImportExcel.vue'
 
@@ -124,7 +124,6 @@ export default {
       const { data } = await getDepartment()
       this.depts = transListToTreeData(data, 0)
       this.queryParams.departmentId = this.depts[0].id
-      // this.queryParams.departmentId = this.depts[0].children[0].id
       // 设置选中节点 树组件渲染是异步的 等到更新完毕
       this.$nextTick(() => {
         this.$refs.treeRef.setCurrentKey(this.queryParams.departmentId)
@@ -174,8 +173,14 @@ export default {
       this.queryParams.page = 1
       this.queryParams.pagesize = 10
       this.queryParams.departmentId = this.depts[0].id
-      // this.queryParams.departmentId = this.depts[0].children[0].id
       this.handleQuery()
+    },
+
+    /** 删除员工 */
+    async delEmployee(record) {
+      await delEmployee(record.id)
+      this.getEmployeeList()
+      this.$message.success(`员工删除成功`)
     },
 
     /** currentPage 改变时会触发 */

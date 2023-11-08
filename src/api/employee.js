@@ -16,3 +16,6 @@ export const getExportTemplate = () => request.get(`/sys/user/import/template`, 
 
 /** 批量导入员工 */
 export const uploadExcel = (data) => request.post(`/sys/user/import`, data, { headers: { 'Content-Type': 'multipart/form-data' } })
+
+/** 删除员工 */
+export const delEmployee = (id) => request.delete(`/sys/user/${id}`)
