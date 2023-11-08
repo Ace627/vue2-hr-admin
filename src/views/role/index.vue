@@ -5,7 +5,7 @@
     </el-card>
 
     <el-card>
-      <el-table :data="list">
+      <el-table :data="list" highlight-current-row>
         <el-table-column align="center" width="200" label="角色编号" prop="id" />
         <el-table-column align="center" width="200" label="角色名称" prop="name" />
         <el-table-column align="center" width="200" label="状态">
@@ -24,7 +24,16 @@
       </el-table>
 
       <div class="flex justify-end items-center mt-16">
-        <el-pagination background layout="total, prev, pager, next, jumper" :total="total" :current-page="pageNo" :page-size="pagesize" />
+        <el-pagination
+          background
+          :layout="layout"
+          :page-sizes="pageSizeList"
+          :total="total"
+          :current-page="pageNo"
+          :page-size="pagesize"
+          @current-change="changePageNo"
+          @size-change="changePageSize"
+        />
       </div>
     </el-card>
   </div>
@@ -38,9 +47,11 @@ export default {
   components: {},
   data() {
     return {
-      pageNo: 1, // 当前页码数
-      pagesize: 1, // 当前页面需要的数据条数
-      total: 0,
+      pageNo: 1, // 当前页数
+      pagesize: 10, // 每页显示条目个数
+      total: 0, // 总条目数
+      pageSizeList: [10, 20, 30, 40, 50],
+      layout: 'total, sizes, prev, pager, next, jumper', // 组件布局，子组件名用逗号分隔
       list: [],
     }
   },
@@ -50,6 +61,19 @@ export default {
       const { data } = await getRoleList({ page: this.pageNo, pagesize: this.pagesize })
       this.total = data.total
       this.list = data.rows
+    },
+
+    /** currentPage 改变时会触发 */
+    changePageNo(pageNo) {
+      this.pageNo = pageNo
+      this.getRoleList()
+    },
+
+    /** pageSize 改变时会触发 */
+    changePageSize(pagesize) {
+      this.pagesize = pagesize
+      this.pageNo = 1
+      this.getRoleList()
     },
   },
   created() {
