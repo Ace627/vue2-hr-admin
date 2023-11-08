@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <ImportExcelVue :showExcelDialog.sync="showExcelDialog" />
+    <ImportExcelVue :showExcelDialog.sync="showExcelDialog" @uploadSuccess="getEmployeeList" />
   </div>
 </template>
 

@@ -2,13 +2,13 @@
   <el-dialog width="500px" title="员工数据导入" :visible="showExcelDialog" @close="closeDialog" :close-on-click-modal="false">
     <el-row type="flex" justify="center">
       <div class="upload-excel">
-        <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" />
+        <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="uploadChange" />
         <div class="drop">
           <i class="el-icon-upload" />
           <el-button type="text" @click="getExportTemplate">下载导入模板</el-button>
           <span>
             <span>将文件拖到此处或</span>
-            <el-button type="text">点击上传</el-button>
+            <el-button type="text" @click="handleUpload">点击上传</el-button>
           </span>
         </div>
       </div>
@@ -22,7 +22,7 @@
 
 <script>
 import FileSaver from 'file-saver'
-import { getExportTemplate } from '@/api/employee'
+import { getExportTemplate, uploadExcel } from '@/api/employee'
 
 export default {
   name: 'ImportExcel',
@@ -43,6 +43,30 @@ export default {
       const data = await getExportTemplate()
       FileSaver.saveAs(data, '员工导入模版.xlsx')
       setTimeout(() => loading.close(), 200)
+    },
+
+    /** */
+    handleUpload() {
+      this.$refs['excel-upload-input'].click()
+    },
+
+    async uploadChange(event) {
+      const files = event.target.files
+      if (!files.length) return void 0
+      const formData = new FormData()
+      formData.append('file', files[0])
+      try {
+        await uploadExcel(formData)
+        this.$emit('uploadSuccess') // 通知父组件 我上传成功
+        this.$message.success(`批量导入员工成功`)
+        this.closeDialog()
+      } catch (error) {
+        console.log('error: ', error)
+      } finally {
+        // 这里为什么不管成功或者失败都要清空文件选择器中的内容呢？
+        // 因为不论成功或者失败，再点击上传都会去选择一个新的 excel，所以这里使用 finally 等到最后，将内容清空。
+        this.$refs['excel-upload-input'].value = ''
+      }
     },
   },
   mounted() {},

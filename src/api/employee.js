@@ -13,3 +13,6 @@ export const exportEmployee = () => request.get(`/sys/user/export`, { responseTy
 
 /** 下载导入员工模板 Excel */
 export const getExportTemplate = () => request.get(`/sys/user/import/template`, { responseType: 'blob' })
+
+/** 批量导入员工 */
+export const uploadExcel = (data) => request.post(`/sys/user/import`, data, { headers: { 'Content-Type': 'multipart/form-data' } })
