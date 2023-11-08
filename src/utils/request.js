@@ -44,7 +44,7 @@ request.interceptors.response.use(
     if (response.request.responseType === 'blob' || response.request.responseType === 'arraybuffer') {
       return response.data
     }
-    if (code === 10000 && api_data.success) {
+    if (api_data.success) {
       return response.data
     } else {
       Message({ message, type: 'error', duration: 5 * 1000 })
