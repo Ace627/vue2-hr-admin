@@ -8,6 +8,9 @@ import request from '@/utils/request'
  */
 export const getEmployeeList = (params) => request.get(`/sys/user`, { params })
 
+/** 获取员工基本信息 */
+export const getEmployeeDetail = (id) => request.get(`/sys/user/${id}`)
+
 /** 批量-导出员工 Excel */
 export const exportEmployee = () => request.get(`/sys/user/export`, { responseType: 'blob' })
 
@@ -19,3 +22,9 @@ export const uploadExcel = (data) => request.post(`/sys/user/import`, data, { he
 
 /** 删除员工 */
 export const delEmployee = (id) => request.delete(`/sys/user/${id}`)
+
+/** 修改员工基本信息 注意1: 手机号不允许更改(因为用户登录需要此手机号) */
+export const updateEmployee = (data) => request.put(`/sys/user/${data.id}`, data)
+
+/** 新增员工 */
+export const addEmployee = (data) => request.post(`/sys/user`, data)

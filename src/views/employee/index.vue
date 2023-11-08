@@ -32,7 +32,7 @@
       </el-form>
 
       <el-row class="opeate-tools" type="flex" justify="start">
-        <el-button plain size="small" type="primary" icon="el-icon-plus">新增</el-button>
+        <el-button plain size="small" type="primary" icon="el-icon-plus" @click="$router.push(`/employee/detail`)">新增</el-button>
         <el-button plain size="small" icon="el-icon-upload2" type="info" @click="showExcelDialog = true">导入</el-button>
         <el-button plain size="small" icon="el-icon-download" type="warning" @click="exportEmployee">导出</el-button>
       </el-row>
@@ -58,7 +58,7 @@
         <el-table-column align="center" label="入职时间" sortable prop="timeOfEntry" min-width="100" />
         <el-table-column align="center" label="操作" min-width="200">
           <template v-slot="{ row }">
-            <el-link type="primary" icon="el-icon-warning-outline">查看</el-link>
+            <el-link type="primary" icon="el-icon-warning-outline" @click="$router.push(`/employee/detail/${row.id}`)">查看</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-link type="warning" icon="el-icon-edit">角色</el-link>
             <el-divider direction="vertical"></el-divider>
