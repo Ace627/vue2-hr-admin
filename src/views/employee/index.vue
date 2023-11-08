@@ -5,6 +5,7 @@
       <el-tree
         default-expand-all
         ref="treeRef"
+        node-key="id"
         :filter-node-method="filterNode"
         :expand-on-click-node="false"
         :data="depts"
@@ -40,7 +41,9 @@ export default {
       // 部门名称
       deptName: undefined,
       // 查询参数
-      queryParams: {},
+      queryParams: {
+        departmentId: undefined,
+      },
     }
   },
   methods: {
@@ -48,12 +51,18 @@ export default {
     async getDepartment() {
       const { data } = await getDepartment()
       this.depts = transListToTreeData(data, 0)
-      console.log('this.depts: ', this.depts)
+      this.queryParams.departmentId = this.depts[0].id
+      // 设置选中节点 树组件渲染是异步的 等到更新完毕
+      this.$nextTick(() => {
+        this.$refs.treeRef.setCurrentKey(this.queryParams.departmentId)
+      })
     },
 
     /** 节点单击事件 */
     handleNodeClick(data) {
       console.log('data: ', data)
+      this.queryParams.departmentId = data.id
+      console.log('this.queryParams.departmentId: ', this.queryParams.departmentId)
     },
 
     /** 筛选节点 */
