@@ -34,7 +34,7 @@
       <el-row class="opeate-tools" type="flex" justify="start">
         <el-button plain size="small" type="primary" icon="el-icon-plus">新增</el-button>
         <el-button plain size="small" icon="el-icon-upload2" type="info">导入</el-button>
-        <el-button plain size="small" icon="el-icon-download" type="warning">导出</el-button>
+        <el-button plain size="small" icon="el-icon-download" type="warning" @click="exportEmployee">导出</el-button>
       </el-row>
 
       <el-table :data="list" highlight-current-row>
@@ -86,13 +86,13 @@
 </template>
 
 <script>
+import FileSaver from 'file-saver'
 import { getDepartment } from '@/api/department'
-import { getEmployeeList } from '@/api/employee'
+import { getEmployeeList, exportEmployee } from '@/api/employee'
 import { transListToTreeData } from '@/utils'
 
 export default {
   name: 'Employee',
-  components: {},
   data() {
     return {
       depts: [],
@@ -137,6 +137,14 @@ export default {
     filterNode(value, data) {
       if (!value) return true
       return data.name.includes(value)
+    },
+
+    /** 导出所有的员工 */
+    async exportEmployee() {
+      const loading = this.$loading({ lock: true, text: '正在下载，请稍候......', spinner: 'el-icon-loading', background: 'rgba(0, 0, 0, 0.8)' })
+      const result = await exportEmployee()
+      FileSaver.saveAs(result, `员工信息表 ${Date.now()}.xlsx`)
+      setTimeout(() => loading.close(), 200)
     },
 
     /** 获取员工列表的方法 */

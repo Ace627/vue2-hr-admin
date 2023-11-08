@@ -7,3 +7,6 @@ import request from '@/utils/request'
  *  存储到了数据库里, 但是图片文件真身被其他人删除了, 此地址还在但是文件不在了会报404(暂不用解决)
  */
 export const getEmployeeList = (params) => request.get(`/sys/user`, { params })
+
+/** 批量-导出员工 Excel */
+export const exportEmployee = () => request.get(`/sys/user/export`, { responseType: 'blob' })

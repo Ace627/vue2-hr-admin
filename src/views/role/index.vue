@@ -117,6 +117,7 @@ export default {
     /** 关闭前的回调，会暂停 Dialog 的关闭 */
     onClose() {
       this.$refs.roleFormRef.resetFields() // 对整个表单进行重置，将所有字段值重置为初始值并移除校验结果
+      this.roleForm = { name: '', description: '', state: 0 }
       this.showDialog = false
     },
 
