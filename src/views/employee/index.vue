@@ -33,7 +33,7 @@
 
       <el-row class="opeate-tools" type="flex" justify="start">
         <el-button plain size="small" type="primary" icon="el-icon-plus">新增</el-button>
-        <el-button plain size="small" icon="el-icon-upload2" type="info">导入</el-button>
+        <el-button plain size="small" icon="el-icon-upload2" type="info" @click="showExcelDialog = true">导入</el-button>
         <el-button plain size="small" icon="el-icon-download" type="warning" @click="exportEmployee">导出</el-button>
       </el-row>
 
@@ -82,6 +82,8 @@
         />
       </div>
     </div>
+
+    <ImportExcelVue :showExcelDialog.sync="showExcelDialog" />
   </div>
 </template>
 
@@ -90,9 +92,11 @@ import FileSaver from 'file-saver'
 import { getDepartment } from '@/api/department'
 import { getEmployeeList, exportEmployee } from '@/api/employee'
 import { transListToTreeData } from '@/utils'
+import ImportExcelVue from './components/ImportExcel.vue'
 
 export default {
   name: 'Employee',
+  components: { ImportExcelVue },
   data() {
     return {
       depts: [],
@@ -101,6 +105,7 @@ export default {
       total: 0, // 总条目数
       pageSizeList: [10, 20, 30, 40, 50],
       layout: 'total, sizes, prev, pager, next, jumper', // 组件布局，子组件名用逗号分隔
+      showExcelDialog: false, // 控制导入 Excel 的弹层显示和隐藏
       // 部门名称
       deptName: undefined,
       // 查询参数
