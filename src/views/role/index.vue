@@ -2,6 +2,7 @@
   <div class="app-content">
     <el-card class="mb-16">
       <el-button size="mini" type="primary" icon="el-icon-plus" plain @click="showDialog = true">新增</el-button>
+      <el-button size="mini" type="warning" icon="el-icon-plus" plain @click="mockRoleList(50)">随机十条</el-button>
     </el-card>
 
     <el-card>
@@ -16,9 +17,11 @@
         <el-table-column align="center" label="描述" prop="description" show-overflow-tooltip />
         <el-table-column align="center" label="操作">
           <template v-slot="{ row }">
-            <el-link type="primary" @click="updateRole(row)">修改</el-link>
+            <el-link type="primary" @click="openRoleDialog(row)">修改</el-link>
             <el-divider direction="vertical"></el-divider>
-            <el-link type="primary" @click="delRole(row)">删除</el-link>
+            <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="delRole(row)">
+              <el-link type="primary" slot="reference">删除</el-link>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -130,7 +133,8 @@ export default {
       }
     },
 
-    async mockRoleList(count = 10) {
+    /** 随机增加 10 条模拟角色数据 */
+    async mockRoleList(count) {
       for (let i = 0; i < count; i++) {
         const data = {}
         const timestamp = Date.now()
@@ -140,35 +144,24 @@ export default {
         await addRole(data)
         console.log(`测试角色 ${timestamp} 添加完成`)
       }
+      this.getRoleList()
+      this.$message.success(`随机数据添加成功`)
     },
 
     /** 删除角色 */
     async delRole(record) {
-      try {
-        console.log(this.list.length)
-        if (this.list.length === 1 && this.pageNo > 1) this.pageNo--
-        await this.$confirm(`是否确认删除角色 ${record.name}`, '系统提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
-        await delRole(record.id)
-        this.getRoleList()
-        this.$message.success(`角色删除成功`)
-      } catch (error) {
-        console.log('error: ', error)
-      }
+      await delRole(record.id)
+      if (this.list.length === 1 && this.pageNo > 1) this.pageNo--
+      this.getRoleList()
+      this.$message.success(`角色删除成功`)
     },
 
     /** 点击修改按钮的回调 */
-    async updateRole(record) {
+    async openRoleDialog(record) {
       const { data } = await getRoleDetail(record.id)
       this.roleForm = data
       this.showDialog = true
-      console.log('data: ', data)
     },
-
-    // /** 获取角色详情 */
-    // async getRoleDetail(record) {
-    //   const {data} = await getRoleDetail(record.id)
-    //   console.log('data: ', data);
-    // },
   },
   created() {
     this.getRoleList() // 获取-分页查询角色列表
