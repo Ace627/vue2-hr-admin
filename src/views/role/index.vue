@@ -133,7 +133,7 @@ export default {
       }
     },
 
-    /** 随机增加 10 条模拟角色数据 */
+    /** 随机增加 50 条模拟角色数据 */
     async mockRoleList(count) {
       for (let i = 0; i < count; i++) {
         const data = {}
@@ -183,10 +183,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-table {
-  // margin: 16px auto;
-}
-
 .el-form .el-button {
   width: 100px;
 }
