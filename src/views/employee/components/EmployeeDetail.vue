@@ -25,7 +25,8 @@
         <el-date-picker v-model="userForm.correctionTime" type="date" placeholder="请选择转正时间" value-format="yyyy-MM-dd" />
       </el-form-item>
       <el-form-item label="员工头像">
-        <ImageUpload v-model="userForm.staffPhoto" />
+        <!-- <ImageUpload v-model="userForm.staffPhoto" /> -->
+        <el-input v-model.trim="userForm.staffPhoto" type="textarea" :rows="3" placeholder="直接输入一个网络图片链接即可"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="submitUserForm" type="primary">提交</el-button>
@@ -60,7 +61,7 @@ export default {
         timeOfEntry: [{ required: true, message: '请选择入职时间', trigger: 'change' }],
         username: [
           { required: true, message: '请输入员工姓名', trigger: 'blur' },
-          { min: 1, max: 4, message: '姓名长度 1~4 位', trigger: 'blur' },
+          { min: 2, max: 4, message: '姓名长度 2~4 位', trigger: 'blur' },
         ],
         mobile: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
@@ -111,7 +112,8 @@ export default {
 <style lang="scss" scoped>
 .el-input,
 .el-cascader,
-.el-select {
+.el-select,
+.el-textarea {
   width: 320px;
 }
 

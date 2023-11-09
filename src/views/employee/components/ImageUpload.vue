@@ -1,5 +1,5 @@
 <template>
-  <el-upload class="avatar-uploader" action="" :show-file-list="false" :before-upload="beforeAvatarUpload" :accept="accept">
+  <el-upload class="avatar-uploader" action="" :show-file-list="false" :before-upload="beforeAvatarUpload" :accept="accept" :http-request="uploadImage">
     <!-- (自动上传)action是上传地址 人资项目不需要 人资项目(手动上传)  -->
     <!-- show-file-list 不展示列表 -->
     <img v-if="value" :src="value" class="avatar" />
@@ -30,6 +30,7 @@ export default {
 
     /** 选择图片上传 */
     uploadImage(params) {
+      console.log('params: ', params)
       // 完成 cos 对象的初始化
       const cos = new COS({ SecretId: 'AKIDDSdjgnjT1NZ3a7VjkfVIwOdfv9IH2b8e', SecretKey: 'WEwe9WJ9vLeq1BHNLLKF5Up10ndUDk24' })
       cos.putObject(
