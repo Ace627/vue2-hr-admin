@@ -2,7 +2,7 @@
   <div class="app-content">
     <el-card class="mb-16">
       <el-button size="mini" type="primary" icon="el-icon-plus" plain @click="showDialog = true">新增</el-button>
-      <el-button size="mini" type="warning" icon="el-icon-plus" plain @click="mockRoleList(50)">随机十条</el-button>
+      <el-button size="mini" type="warning" icon="el-icon-plus" plain @click="mockRoleList(10)">随机十条</el-button>
     </el-card>
 
     <el-card>

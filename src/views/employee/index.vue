@@ -60,7 +60,7 @@
           <template v-slot="{ row }">
             <el-link type="primary" icon="el-icon-warning-outline" @click="$router.push(`/employee/detail/${row.id}`)">查看</el-link>
             <el-divider direction="vertical"></el-divider>
-            <el-link type="warning" icon="el-icon-edit">角色</el-link>
+            <el-link type="warning" icon="el-icon-edit" @click="openRoleDrawer(row)">角色</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-popconfirm :title="`是否确认删除用户 ${row.username}`" @confirm="delEmployee(row)">
               <el-link type="danger" slot="reference" icon="el-icon-delete">删除</el-link>
@@ -84,12 +84,20 @@
     </div>
 
     <ImportExcelVue :showExcelDialog.sync="showExcelDialog" @uploadSuccess="getEmployeeList" />
+
+    <!-- 角色分配弹框 -->
+    <el-drawer title="分配角色" :visible.sync="showRoleDrawer">
+      <el-checkbox-group v-model="checkRoleList">
+        <el-checkbox v-for="(v, i) in enabledRoleList" :key="i" :label="v.id">{{ v.name }}</el-checkbox>
+      </el-checkbox-group>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import FileSaver from 'file-saver'
 import { getDepartment } from '@/api/department'
+import { getEnabledRoleList } from '@/api/role'
 import { getEmployeeList, exportEmployee, delEmployee } from '@/api/employee'
 import { transListToTreeData } from '@/utils'
 import ImportExcelVue from './components/ImportExcel.vue'
@@ -101,11 +109,14 @@ export default {
     return {
       depts: [],
       list: [], // 存储员工列表
+      enabledRoleList: [],
+      checkRoleList: [],
       defaultProps: { children: 'children', label: 'name' },
       total: 0, // 总条目数
       pageSizeList: [10, 20, 30, 40, 50],
       layout: 'total, sizes, prev, pager, next, jumper', // 组件布局，子组件名用逗号分隔
       showExcelDialog: false, // 控制导入 Excel 的弹层显示和隐藏
+      showRoleDrawer: false,
       // 部门名称
       deptName: undefined,
       // 查询参数
@@ -176,6 +187,19 @@ export default {
       this.handleQuery()
     },
 
+    /** 获取已启用的角色列表 */
+    async getEnabledRoleList() {
+      const { data } = await getEnabledRoleList()
+      this.enabledRoleList = data
+      console.log('this.enabledRoleList: ', this.enabledRoleList)
+    },
+
+    /** 打开角色分配抽屉层 */
+    async openRoleDrawer(record) {
+      await this.getEnabledRoleList()
+      this.showRoleDrawer = true
+    },
+
     /** 删除员工 */
     async delEmployee(record) {
       await delEmployee(record.id)
@@ -210,6 +234,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .el-drawer__body {
+  padding: 16px;
+}
+.el-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  .el-checkbox {
+    height: 24px;
+  }
+}
+
 .app-content {
   display: flex;
 }

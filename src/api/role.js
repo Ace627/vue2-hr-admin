@@ -3,7 +3,7 @@ import request from '@/utils/request'
 /** 获取-分页查询角色列表 */
 export const getRoleList = (params) => request.get(`/sys/role`, { params })
 
-/** 获取-已启用的角色列表 */
+/** 获取已启用的角色列表 */
 export const getEnabledRoleList = (params) => request.get(`/sys/role/list/enabled`, { params })
 
 /** 新增角色 */
