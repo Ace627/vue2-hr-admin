@@ -19,6 +19,8 @@
           <template v-slot="{ row }">
             <el-link type="warning" @click="openRoleDialog(row)" icon="el-icon-edit">修改</el-link>
             <el-divider direction="vertical"></el-divider>
+            <el-link type="success" @click="openPermissionDrawer" icon="el-icon-edit">权限</el-link>
+            <el-divider direction="vertical"></el-divider>
             <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="delRole(row)">
               <el-link type="danger" slot="reference" icon="el-icon-delete">删除</el-link>
             </el-popconfirm>
@@ -58,17 +60,33 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <!-- 权限分配模态框 -->
+    <el-drawer title="分配权限" :visible.sync="showPermissionDrawer">
+      <!-- 权限选择树 -->
+      <el-tree :data="permissionData" :props="{ label: 'name' }" show-checkbox default-expand-all />
+      <el-divider></el-divider>
+      <div class="flex justify-center items-center mt-16">
+        <el-button size="small" @click="showPermissionDrawer = false">取消</el-button>
+        <el-button size="small" type="primary" @click="submitPermission">提交</el-button>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import { getRoleList, addRole, delRole, getRoleDetail, updateRole } from '@/api/role'
+import { getPermissionList } from '@/api/permission'
+import { transListToTreeData } from '@/utils'
 
 export default {
   name: 'Role',
   components: {},
   data() {
     return {
+      showPermissionDrawer: false,
+      permissionData: [],
+
       pageNo: 1, // 当前页数
       pageSize: 10, // 每页显示条目个数
       total: 0, // 总条目数
@@ -93,6 +111,16 @@ export default {
     },
   },
   methods: {
+    /** 给角色分配权限相关的方法 */
+    async openPermissionDrawer() {
+      const { data } = await getPermissionList()
+      this.permissionData = transListToTreeData(data, 0)
+      this.showPermissionDrawer = true
+    },
+    submitPermission() {
+      console.log(this.permissionData)
+    },
+
     /** 获取-分页查询角色列表 */
     async getRoleList() {
       const { pageNo: page, pageSize: pagesize } = this
@@ -139,8 +167,9 @@ export default {
       for (let i = 0; i < count; i++) {
         const data = {}
         const timestamp = Date.now()
-        data.name = `测试角色 ${timestamp}`
-        data.description = `测试角色 ${timestamp} 的描述信息`
+        data.name = `黑马角色 ${timestamp}`
+        // data.description = `黑马角色 ${timestamp} 的描述信息`
+        data.description = `测试角色可随意RUD`
         data.state = Math.random() > 0.5 ? 1 : 0
         await addRole(data)
         console.log(`测试角色 ${timestamp} 添加完成`)
@@ -184,6 +213,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .el-drawer__body {
+  padding: 0 16px;
+  .el-button {
+    width: 100px;
+  }
+}
+
 .el-form .el-button {
   width: 100px;
 }
