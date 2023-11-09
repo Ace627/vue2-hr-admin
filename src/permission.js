@@ -1,6 +1,5 @@
-import router from './router'
+import router, { asyncRoutes } from './router'
 import store from './store'
-import { Message } from 'element-ui'
 import NProgress from 'nprogress'
 import { getToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
@@ -23,7 +22,9 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         try {
-          await store.dispatch('user/getUserInfo')
+          const userInfo = await store.dispatch('user/getUserInfo')
+          const permissionRoutes = asyncRoutes.filter((route) => userInfo.roles.menus.some((menu) => route.path.includes(menu)))
+          console.log('permissionRoutes: ', permissionRoutes)
           next()
         } catch (error) {
           await store.dispatch('user/resetToken') // 重置 Token
