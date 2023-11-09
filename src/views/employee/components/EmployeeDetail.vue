@@ -8,7 +8,7 @@
         <el-input v-model="userForm.workNumber" placeholder="请输入员工工号" disabled></el-input>
       </el-form-item>
       <el-form-item label="手机号码" prop="mobile">
-        <el-input v-model="userForm.mobile" placeholder="请输入手机号码" :disabled="!employeeId"></el-input>
+        <el-input v-model="userForm.mobile" placeholder="请输入手机号码"></el-input>
       </el-form-item>
       <el-form-item label="所属部门" prop="departmentId">
         <SelectTree v-model="userForm.departmentId" />
@@ -43,11 +43,12 @@ export default {
       userForm: {
         username: '', // 用户名
         mobile: '', // 手机号码
-        workNumber: '', // 员工工号
+        workNumber: null, // 员工工号
         formOfEmployment: '', // 聘用形式
         departmentId: null, // 部门 id
         timeOfEntry: '', // 入职时间
         correctionTime: '', // 转正时间
+        staffPhoto: null,
       },
       userFormRules: {
         formOfEmployment: [{ required: true, message: '请输入聘用形式', trigger: 'blur' }],
@@ -90,6 +91,9 @@ export default {
       try {
         console.log('this.userForm : ', this.userForm)
         await this.$refs.userFormRef.validate()
+        this.userForm.id ? updateEmployee(this.userForm) : await addEmployee(this.userForm)
+        const message = this.userForm.id ? '更新员工成功' : '新增员工成功'
+        this.$message.success(message)
       } catch (error) {
         console.log('error: ', error)
       }
