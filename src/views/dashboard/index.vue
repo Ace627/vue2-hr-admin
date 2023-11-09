@@ -101,6 +101,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="social" style="width: 100%; height: 100%" />
             </div>
           </div>
         </div>
@@ -130,6 +131,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="provident" style="width: 100%; height: 100%" />
             </div>
           </div>
         </div>
@@ -191,6 +193,7 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import * as echarts from 'echarts' // 引入所有的 Echarts
 import { getHomeData, getMessageList } from '@/api/home'
 
 export default {
@@ -207,35 +210,87 @@ export default {
       return this.$store.state.user.userInfo || {}
     },
   },
-  created() {
-    // 各个请求不相干 并发
-    Promise.all([this.getHomeData(), this.getMessageList()])
-  },
+
   methods: {
     async getHomeData() {
       this.homeData = (await getHomeData()).data
     },
+
     async getMessageList() {
       this.list = (await getMessageList()).data
     },
+
+    echartsResize() {
+      this.social.resize()
+      this.provident.resize()
+    },
+  },
+
+  watch: {
+    homeData() {
+      this.social.setOption({
+        xAxis: { type: 'category', boundaryGap: false, data: this.homeData.socialInsurance?.xAxis },
+        yAxis: { type: 'value' },
+        series: [
+          {
+            data: this.homeData.socialInsurance?.yAxis,
+            type: 'line',
+            areaStyle: { color: '#04c9be' }, // 填充颜色
+            lineStyle: { color: '#04c9be' }, // 线的颜色
+          },
+        ],
+      })
+
+      this.provident.setOption({
+        xAxis: { type: 'category', boundaryGap: false, data: this.homeData.providentFund?.xAxis },
+        yAxis: { type: 'value' },
+        series: [
+          {
+            data: this.homeData.providentFund?.yAxis,
+            type: 'line',
+            areaStyle: { color: '#04c9be' },
+            lineStyle: { color: '#04c9be' },
+          },
+        ],
+      })
+    },
+  },
+
+  created() {
+    // 各个请求不相干 并发
+    Promise.all([this.getHomeData(), this.getMessageList()])
+  },
+  mounted() {
+    // 获取展示的数据 设置给图表
+    // 监听 homeData 的变化
+    this.social = echarts.init(this.$refs.social) // 初始化echart
+    // data 中没有声明 不是响应式
+    this.provident = echarts.init(this.$refs.provident)
+
+    window.addEventListener('resize', this.echartsResize)
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.echartsResize)
   },
 }
 </script>
 
 <style scoped lang="scss">
+::v-deep .el-calendar-day {
+  height: 40px;
+}
+::v-deep .el-calendar-table__row td,
+::v-deep .el-calendar-table tr td:first-child,
+::v-deep .el-calendar-table__row td.prev {
+  border: none;
+}
+
 .dashboard {
   background: #f5f6f8;
   width: 100%;
   min-height: calc(100vh - 80px);
 
-  ::v-deep .el-calendar-day {
-    height: 40px;
-  }
-  ::v-deep .el-calendar-table__row td,
-  ::v-deep .el-calendar-table tr td:first-child,
-  ::v-deep .el-calendar-table__row td.prev {
-    border: none;
-  }
   .date-content {
     height: 40px;
     text-align: center;
