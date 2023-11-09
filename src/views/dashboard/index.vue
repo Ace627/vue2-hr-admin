@@ -6,13 +6,14 @@
         <div class="panel">
           <!-- 个人信息 -->
           <div class="user-info">
-            <img class="avatar" src="../../assets/common/defaultHead.png" alt="" />
+            <img class="avatar" v-if="userInfo.staffPhoto" :src="userInfo.staffPhoto" alt="" />
+            <img class="avatar" v-else src="../../assets/common/defaultHead.png" alt="" />
             <div class="company-info">
               <div class="title">
                 江苏传智播客教育科技股份有限公司
                 <span>体验版</span>
               </div>
-              <div class="depart">庆山 ｜ 传智播客-总裁办</div>
+              <div class="depart">{{ userInfo.username }} ｜ {{ userInfo.company }} - {{ userInfo.departmentName }}</div>
             </div>
           </div>
           <!-- 代办 -->
@@ -204,6 +205,11 @@ import CountTo from 'vue-count-to'
 export default {
   namr: 'Dashboard',
   components: { CountTo },
+  computed: {
+    userInfo() {
+      return this.$store.state.user.userInfo || {}
+    },
+  },
 }
 </script>
 
