@@ -33,14 +33,10 @@ import socialRouter from './modules/social' // 社保管理
   }
  */
 
-// 动态路由
+/** 动态路由 需要特定权限才可以访问 */
 export const asyncRoutes = [departmentRouter, roleRouter, employeeRouter, permissionRouter, attendanceRouter, approvalRouter, salaryRouter, socialRouter]
 
-/**
- * constantRoutes
- * a base page that does not have permission requirements
- * all roles can be accessed
- */
+/** 静态路由 所有人都可以访问 */
 export const constantRoutes = [
   {
     path: '/login',
