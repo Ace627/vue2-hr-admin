@@ -145,7 +145,7 @@ export default {
       this.queryParams.departmentId = this.depts[0].id
       // 设置选中节点 树组件渲染是异步的 等到更新完毕
       this.$nextTick(() => {
-        this.$refs.treeRef.setCurrentKey(this.queryParams.departmentId)
+        this.$refs.treeRef?.setCurrentKey(this.queryParams.departmentId)
         this.getEmployeeList()
       })
     },

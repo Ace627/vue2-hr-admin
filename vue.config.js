@@ -55,6 +55,15 @@ module.exports = {
         '@': resolve('src'),
       },
     },
+
+    /**
+     * 将几个比较大的多在打包时排除，这样可以缩小整体打包的大小，保证js的加载速度，
+     * 排除的包采用cdn的方式用外链去引入，cdn本名为分发服务器，意为更近的访问区间更快的访问速度将所需要的文件返回给客户端
+     */
+    externals: {
+      vue: 'Vue',
+      'element-ui': 'ELEMENT',
+    },
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
@@ -83,7 +92,7 @@ module.exports = {
       .options({ symbolId: 'icon-[name]' })
       .end()
 
-    config.when(process.env.NODE_ENV !== 'development', config => {
+    config.when(process.env.NODE_ENV !== 'development', (config) => {
       config
         .plugin('ScriptExtHtmlWebpackPlugin')
         .after('html')
