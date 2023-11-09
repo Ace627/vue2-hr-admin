@@ -24,9 +24,9 @@ router.beforeEach(async (to, from, next) => {
         try {
           const userInfo = await store.dispatch('user/getUserInfo')
           const permissionRoutes = asyncRoutes.filter((route) => userInfo.roles.menus.some((menu) => route.path.includes(menu)))
+          store.commit('user/SET_ROUTES', permissionRoutes)
           router.addRoutes([...permissionRoutes, { path: '*', redirect: '/404', hidden: true }]) // 添加动态路由信息
           next({ ...to, replace: true }) // 设置 replace: true, 因此导航将不会留下历史记录
-          next(to.path)
         } catch (error) {
           await store.dispatch('user/resetToken') // 重置 Token
           next(`/login?redirect=${to.path}`) // 重定向至登录页

@@ -29,7 +29,7 @@ export default {
   computed: {
     ...mapGetters(['sidebar']),
     routes() {
-      return this.$router.options.routes
+      return this.$store.state.user.routes
     },
     activeMenu() {
       const route = this.$route
