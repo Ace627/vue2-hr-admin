@@ -24,7 +24,9 @@
       <el-form-item label="转正时间" prop="correctionTime">
         <el-date-picker v-model="userForm.correctionTime" type="date" placeholder="请选择转正时间" value-format="yyyy-MM-dd" />
       </el-form-item>
-      <el-form-item label="员工头像"></el-form-item>
+      <el-form-item label="员工头像">
+        <ImageUpload v-model="userForm.staffPhoto" />
+      </el-form-item>
       <el-form-item>
         <el-button @click="submitUserForm" type="primary">提交</el-button>
       </el-form-item>
@@ -35,10 +37,11 @@
 <script>
 import { addEmployee, updateEmployee, getEmployeeDetail } from '@/api/employee'
 import SelectTree from './SelectTree.vue'
+import ImageUpload from './ImageUpload.vue'
 
 export default {
   name: 'EmployeeDetail',
-  components: { SelectTree },
+  components: { SelectTree, ImageUpload },
   data() {
     return {
       userForm: {
