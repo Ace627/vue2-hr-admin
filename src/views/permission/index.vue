@@ -82,7 +82,6 @@ export default {
     async getPermissionList() {
       const { data } = await getPermissionList()
       this.list = transListToTreeData(data, 0) // 将列表数据转化成树形结构
-      console.log('this.list: ', this.list)
     },
 
     addPermission(pid, type) {
