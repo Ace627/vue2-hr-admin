@@ -11,12 +11,13 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import directives from './directives'
 
 import '@/icons' // icon
 import '@/permission' // permission control
 
+Vue.use(directives)
 Vue.use(ElementUI, { zIndex: 3000 })
-
 Vue.config.productionTip = false
 
 new Vue({
