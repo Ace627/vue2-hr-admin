@@ -8,7 +8,8 @@
         <el-input v-model="userForm.workNumber" placeholder="请输入员工工号" disabled></el-input>
       </el-form-item>
       <el-form-item label="手机号码" prop="mobile">
-        <el-input v-model="userForm.mobile" placeholder="请输入手机号码"></el-input>
+        <!-- 因为新增时手机号已经注册成功，手机号如果修改了，用户就不能再成功登录。所以编辑时，用户的手机号不允许修改 -->
+        <el-input v-model="userForm.mobile" placeholder="请输入手机号码" :disabled="Boolean(employeeId)"></el-input>
       </el-form-item>
       <el-form-item label="所属部门" prop="departmentId">
         <SelectTree v-model="userForm.departmentId" />
@@ -89,7 +90,6 @@ export default {
 
     async submitUserForm() {
       try {
-        console.log('this.userForm : ', this.userForm)
         await this.$refs.userFormRef.validate()
         this.userForm.id ? updateEmployee(this.userForm) : await addEmployee(this.userForm)
         const message = this.userForm.id ? '更新员工成功' : '新增员工成功'
