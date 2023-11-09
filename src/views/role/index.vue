@@ -19,7 +19,7 @@
           <template v-slot="{ row }">
             <el-link type="warning" @click="openRoleDialog(row)" icon="el-icon-edit">修改</el-link>
             <el-divider direction="vertical"></el-divider>
-            <el-link type="success" @click="openPermissionDrawer" icon="el-icon-edit">权限</el-link>
+            <el-link type="success" @click="openPermissionDrawer(row)" icon="el-icon-edit">权限</el-link>
             <el-divider direction="vertical"></el-divider>
             <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="delRole(row)">
               <el-link type="danger" slot="reference" icon="el-icon-delete">删除</el-link>
@@ -64,7 +64,7 @@
     <!-- 权限分配模态框 -->
     <el-drawer title="分配权限" :visible.sync="showPermissionDrawer">
       <!-- 权限选择树 -->
-      <el-tree :data="permissionData" :props="{ label: 'name' }" show-checkbox default-expand-all />
+      <el-tree :data="permissionData" ref="permissionTreeRef" :props="{ label: 'name' }" show-checkbox default-expand-all node-key="id" :defaultCheckedKeys="defaultCheckedKeys" />
       <el-divider></el-divider>
       <div class="flex justify-center items-center mt-16">
         <el-button size="small" @click="showPermissionDrawer = false">取消</el-button>
@@ -84,8 +84,10 @@ export default {
   components: {},
   data() {
     return {
+      roleId: null,
       showPermissionDrawer: false,
       permissionData: [],
+      defaultCheckedKeys: [], // 默认勾选的节点的 key 的数组
 
       pageNo: 1, // 当前页数
       pageSize: 10, // 每页显示条目个数
@@ -112,7 +114,11 @@ export default {
   },
   methods: {
     /** 给角色分配权限相关的方法 */
-    async openPermissionDrawer() {
+    async openPermissionDrawer(record) {
+      this.roleId = record.id
+      const { data: roleInfo } = await getRoleDetail(record.id)
+      const { permIds } = roleInfo
+      this.defaultCheckedKeys = permIds
       const { data } = await getPermissionList()
       this.permissionData = transListToTreeData(data, 0)
       this.showPermissionDrawer = true
