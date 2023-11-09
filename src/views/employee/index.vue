@@ -31,7 +31,7 @@
         </el-form-item>
       </el-form>
 
-      <el-row class="opeate-tools" type="flex" justify="start">
+      <el-row class="opeate-tools mb-16" type="flex" justify="start">
         <el-button plain size="small" type="primary" icon="el-icon-plus" @click="$router.push(`/employee/detail`)">新增</el-button>
         <el-button plain size="small" icon="el-icon-upload2" type="info" @click="showExcelDialog = true">导入</el-button>
         <el-button plain size="small" icon="el-icon-download" type="warning" @click="exportEmployee">导出</el-button>

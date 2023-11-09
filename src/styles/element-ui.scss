@@ -6,7 +6,7 @@
 }
 
 .el-upload {
-  input[type="file"] {
+  input[type='file'] {
     display: none !important;
   }
 }
@@ -14,7 +14,6 @@
 .el-upload__input {
   display: none;
 }
-
 
 // to fixed https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
@@ -39,11 +38,29 @@
 // dropdown
 .el-dropdown-menu {
   a {
-    display: block
+    display: block;
   }
 }
 
 // to fix el-date-picker css style
 .el-range-separator {
   box-sizing: content-box;
+}
+
+.el-table {
+  /* prettier-ignore */
+  .el-table__header-wrapper, .el-table__fixed-header-wrapper {
+    th {
+      height: 40px;
+      font-size: 14px;
+      word-break: break-word;
+      color: #515a6e;
+      background-color: #EAEAEF; // 极光灰
+    }
+  }
+  .el-table__body-wrapper {
+    .el-button [class*='el-icon-'] + span {
+      margin-left: 1px;
+    }
+  }
 }
