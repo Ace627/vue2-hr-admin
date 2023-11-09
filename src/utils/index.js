@@ -97,7 +97,7 @@ export function param2Obj(url) {
   }
   const obj = {}
   const searchArr = search.split('&')
-  searchArr.forEach(v => {
+  searchArr.forEach((v) => {
     const index = v.indexOf('=')
     if (index !== -1) {
       const name = v.substring(0, index)
@@ -116,7 +116,7 @@ export function transListToTreeData(list, rootValue) {
       // 父级的 id 为子级的pid
       // 找到了匹配的节点 当前节点的 id 和 当前节点的子节点的 pid 是相等的
       const children = transListToTreeData(list, item.id) // 找到的节点的子节点
-      item['children'] = children // 将子节点赋值给当前节点
+      children.length && (item['children'] = children) // 将子节点赋值给当前节点
       tem_list.push(item)
     }
   }

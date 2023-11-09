@@ -59,7 +59,6 @@ export default {
     async getDepartment() {
       const { data } = await getDepartment()
       this.depts = transListToTreeData(data, 0)
-      console.log('this.depts: ', this.depts)
     },
 
     /** 删除部门详情 */

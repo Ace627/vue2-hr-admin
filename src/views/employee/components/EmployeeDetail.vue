@@ -11,7 +11,8 @@
         <el-input v-model="userForm.mobile" placeholder="请输入手机号码" :disabled="!employeeId"></el-input>
       </el-form-item>
       <el-form-item label="所属部门" prop="departmentId">
-        <el-select v-model="userForm.departmentId" placeholder="请选择所属部门"></el-select>
+        <!-- <el-select v-model="userForm.departmentId" placeholder="请选择所属部门"></el-select> -->
+        <SelectTree />
       </el-form-item>
       <el-form-item label="聘用形式" prop="formOfEmployment">
         <el-radio v-model="userForm.formOfEmployment" :label="1">正式</el-radio>
@@ -25,7 +26,7 @@
       </el-form-item>
       <el-form-item label="员工头像"></el-form-item>
       <el-form-item>
-        <el-button @click="submitUserForm">提交</el-button>
+        <el-button @click="submitUserForm" type="primary">提交</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -33,11 +34,11 @@
 
 <script>
 import { addEmployee, updateEmployee, getEmployeeDetail } from '@/api/employee'
+import SelectTree from './SelectTree.vue'
 
 export default {
   name: 'EmployeeDetail',
-
-  components: {},
+  components: { SelectTree },
   data() {
     return {
       userForm: {
@@ -102,10 +103,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-input {
-  width: 320px;
-}
-
+.el-input,
+.el-cascader,
 .el-select {
   width: 320px;
 }
