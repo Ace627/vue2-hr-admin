@@ -1,6 +1,6 @@
 <template>
   <!-- 部门的级联选择框 -->
-  <el-cascader :options="treeData" :props="props" placeholder="请选择所属部门" separator="-" />
+  <el-cascader :options="treeData" :props="props" placeholder="请选择所属部门" separator="-" :value="value" @change="onChange" />
 </template>
 
 <script>
@@ -9,7 +9,10 @@ import { transListToTreeData } from '@/utils'
 
 export default {
   name: 'SelectTree',
-  components: {},
+  props: {
+    /** 存储的部门 id */
+    value: { type: Number, default: null },
+  },
   data() {
     return {
       treeData: [], // 树状图的可选项数据源
@@ -23,6 +26,12 @@ export default {
     async getDepartment() {
       const { data } = await getDepartment()
       this.treeData = transListToTreeData(data, 0)
+    },
+
+    /** 当选中节点变化时触发 */
+    onChange(value_list) {
+      const value = value_list.length ? value_list.at(-1) : null
+      this.$emit('input', value)
     },
   },
   created() {

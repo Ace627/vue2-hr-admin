@@ -11,8 +11,7 @@
         <el-input v-model="userForm.mobile" placeholder="请输入手机号码" :disabled="!employeeId"></el-input>
       </el-form-item>
       <el-form-item label="所属部门" prop="departmentId">
-        <!-- <el-select v-model="userForm.departmentId" placeholder="请选择所属部门"></el-select> -->
-        <SelectTree />
+        <SelectTree v-model="userForm.departmentId" />
       </el-form-item>
       <el-form-item label="聘用形式" prop="formOfEmployment">
         <el-radio v-model="userForm.formOfEmployment" :label="1">正式</el-radio>
@@ -46,7 +45,7 @@ export default {
         mobile: '', // 手机号码
         workNumber: '', // 员工工号
         formOfEmployment: '', // 聘用形式
-        departmentId: '', // 部门 id
+        departmentId: null, // 部门 id
         timeOfEntry: '', // 入职时间
         correctionTime: '', // 转正时间
       },
@@ -78,7 +77,7 @@ export default {
   computed: {
     // 员工id
     employeeId() {
-      return this.$route.params.id || null
+      return this.$route.params.id ? +this.$route.params.id : null
     },
   },
   methods: {
