@@ -7,8 +7,6 @@ export default {
     if (bindingValue && bindingValue instanceof Array && bindingValue.length > 0) {
       const points = store.state.user.userInfo?.roles?.points || []
       const hasPermission = points.some((point) => bindingValue.includes(point))
-      console.log('points: ', points)
-      console.log('hasPermission: ', hasPermission)
       !hasPermission && el.remove()
     } else {
       throw new Error(`请设置角色权限标签值，例如 ['admin']`)
