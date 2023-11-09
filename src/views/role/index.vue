@@ -64,7 +64,16 @@
     <!-- 权限分配模态框 -->
     <el-drawer title="分配权限" :visible.sync="showPermissionDrawer">
       <!-- 权限选择树 -->
-      <el-tree :data="permissionData" ref="permissionTreeRef" :props="{ label: 'name' }" show-checkbox default-expand-all node-key="id" :defaultCheckedKeys="defaultCheckedKeys" />
+      <el-tree
+        :data="permissionData"
+        ref="permissionTreeRef"
+        :props="{ label: 'name' }"
+        check-strictly
+        show-checkbox
+        default-expand-all
+        node-key="id"
+        :defaultCheckedKeys="defaultCheckedKeys"
+      />
       <el-divider></el-divider>
       <div class="flex justify-center items-center mt-16">
         <el-button size="small" @click="showPermissionDrawer = false">取消</el-button>
@@ -75,7 +84,7 @@
 </template>
 
 <script>
-import { getRoleList, addRole, delRole, getRoleDetail, updateRole } from '@/api/role'
+import { getRoleList, addRole, delRole, getRoleDetail, updateRole, assignRole } from '@/api/role'
 import { getPermissionList } from '@/api/permission'
 import { transListToTreeData } from '@/utils'
 
@@ -115,16 +124,20 @@ export default {
   methods: {
     /** 给角色分配权限相关的方法 */
     async openPermissionDrawer(record) {
+      this.showPermissionDrawer = true
       this.roleId = record.id
       const { data: roleInfo } = await getRoleDetail(record.id)
-      const { permIds } = roleInfo
-      this.defaultCheckedKeys = permIds
+      this.defaultCheckedKeys = roleInfo.permIds // 处理默认选中的权限
       const { data } = await getPermissionList()
       this.permissionData = transListToTreeData(data, 0)
-      this.showPermissionDrawer = true
     },
-    submitPermission() {
-      console.log(this.permissionData)
+    async submitPermission() {
+      const id = this.roleId
+      const permIds = this.$refs.permissionTreeRef.getCheckedNodes().map((v) => v.id)
+      await assignRole({ id, permIds })
+      this.$message.success(`权限分配成功`)
+      this.defaultCheckedKeys = []
+      this.showPermissionDrawer = false
     },
 
     /** 获取-分页查询角色列表 */
