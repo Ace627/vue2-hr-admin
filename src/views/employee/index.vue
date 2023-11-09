@@ -87,9 +87,16 @@
 
     <!-- 角色分配弹框 -->
     <el-drawer title="分配角色" :visible.sync="showRoleDrawer">
-      <el-checkbox-group v-model="checkRoleList">
+      <el-checkbox-group v-model="permIds">
         <el-checkbox v-for="(v, i) in enabledRoleList" :key="i" :label="v.id">{{ v.name }}</el-checkbox>
       </el-checkbox-group>
+
+      <el-divider>敢叫日月换新天</el-divider>
+
+      <div class="flex justify-center items-center mt-16">
+        <el-button size="small" @click="showRoleDrawer = false">取消</el-button>
+        <el-button size="small" type="primary" @click="submitCheckRole">提交</el-button>
+      </div>
     </el-drawer>
   </div>
 </template>
@@ -97,8 +104,8 @@
 <script>
 import FileSaver from 'file-saver'
 import { getDepartment } from '@/api/department'
-import { getEnabledRoleList } from '@/api/role'
-import { getEmployeeList, exportEmployee, delEmployee } from '@/api/employee'
+import { getEnabledRoleList, assignRole } from '@/api/role'
+import { getEmployeeList, exportEmployee, delEmployee, getEmployeeDetail } from '@/api/employee'
 import { transListToTreeData } from '@/utils'
 import ImportExcelVue from './components/ImportExcel.vue'
 
@@ -110,7 +117,8 @@ export default {
       depts: [],
       list: [], // 存储员工列表
       enabledRoleList: [],
-      checkRoleList: [],
+      permIds: [],
+      roleId: null,
       defaultProps: { children: 'children', label: 'name' },
       total: 0, // 总条目数
       pageSizeList: [10, 20, 30, 40, 50],
@@ -191,13 +199,24 @@ export default {
     async getEnabledRoleList() {
       const { data } = await getEnabledRoleList()
       this.enabledRoleList = data
-      console.log('this.enabledRoleList: ', this.enabledRoleList)
     },
 
     /** 打开角色分配抽屉层 */
     async openRoleDrawer(record) {
-      await this.getEnabledRoleList()
       this.showRoleDrawer = true
+      this.roleId = record.id
+      await this.getEnabledRoleList()
+      const { data } = await getEmployeeDetail(this.roleId)
+      this.permIds = data.roleIds
+    },
+
+    /** 提交分配角色的结果 */
+    async submitCheckRole() {
+      console.log(this.permIds)
+      const { code, message } = await assignRole({ id: this.roleId, permIds: this.permIds })
+      if (code !== 10000) return this.$message.error(message)
+      this.$message.success(`角色权限分配成功`)
+      this.showRoleDrawer = false
     },
 
     /** 删除员工 */
@@ -236,6 +255,9 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .el-drawer__body {
   padding: 16px;
+  .el-button {
+    width: 100px;
+  }
 }
 .el-checkbox-group {
   display: flex;
