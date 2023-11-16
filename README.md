@@ -8,6 +8,8 @@ yarn install
 yarn dev
 ```
 
+- [线上预览](http://123.56.66.106/hr-admin-vue2)
+
 ## 项目目录
 
 ```bash
