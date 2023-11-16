@@ -2,22 +2,9 @@
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
 
-function resolve(dir) {
-  return path.join(__dirname, dir)
-}
+const pathResolve = (dir) => path.join(__dirname, dir)
 
 const name = defaultSettings.title || 'vue Admin Template' // page title
-
-/** 来加载所有 VUE_APP_ 前缀的环境变量 */
-const env_config = process.env
-const { VUE_APP_BASE_URL, VUE_APP_BASE_API } = env_config
-
-// If your port is set to 80,
-// use administrator privileges to execute the command line.
-// For example, Mac: sudo npm run
-// You can change the port by the following methods:
-// port = 9528 npm run dev OR npm run dev --port = 9528
-const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -29,22 +16,21 @@ module.exports = {
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
   lintOnSave: false,
-  publicPath: '/',
-  outputDir: 'dist',
+  publicPath: process.env.VUE_APP_PUBLIC_PATH || '/',
+  outputDir: process.env.VUE_APP_OUTPUT_DIR || 'dist',
   assetsDir: 'static',
   productionSourceMap: false,
   devServer: {
     /** 指定开发服务器端口 */
-    port: port,
+    port: parseInt(process.env.VUE_APP_SERVER_PORT) || 3000,
     open: false,
     overlay: { warnings: false, errors: true },
     /** 反向代理配置（主要是开发时用来解决跨域问题） */
     proxy: {
-      [VUE_APP_BASE_API]: {
-        target: VUE_APP_BASE_URL,
+      [process.env.VUE_APP_BASE_API]: {
+        target: process.env.VUE_APP_BASE_URL,
       },
     },
-    // before: require('./mock/mock-server.js'),
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -52,7 +38,7 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
-        '@': resolve('src'),
+        '@': pathResolve('src'),
       },
     },
 
@@ -81,11 +67,11 @@ module.exports = {
     config.plugins.delete('prefetch')
 
     // set svg-sprite-loader
-    config.module.rule('svg').exclude.add(resolve('src/icons')).end()
+    config.module.rule('svg').exclude.add(pathResolve('src/icons')).end()
     config.module
       .rule('icons')
       .test(/\.svg$/)
-      .include.add(resolve('src/icons'))
+      .include.add(pathResolve('src/icons'))
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -119,7 +105,7 @@ module.exports = {
           },
           commons: {
             name: 'chunk-commons',
-            test: resolve('src/components'), // can customize your rules
+            test: pathResolve('src/components'), // can customize your rules
             minChunks: 3, //  minimum common number
             priority: 5,
             reuseExistingChunk: true,

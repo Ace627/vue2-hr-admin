@@ -70,6 +70,7 @@ export const constantRoutes = [
 
 const createRouter = () =>
   new Router({
+    base: process.env.VUE_APP_PUBLIC_PATH || '/',
     mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes,
