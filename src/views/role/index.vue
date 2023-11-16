@@ -6,7 +6,7 @@
     </el-card>
 
     <el-card>
-      <el-table :data="list" highlight-current-row>
+      <el-table v-loading="loading" :data="list" highlight-current-row>
         <el-table-column align="center" width="200" label="角色编号" prop="id" />
         <el-table-column align="center" width="200" label="角色名称" prop="name" show-overflow-tooltip />
         <el-table-column align="center" width="200" label="状态">
@@ -17,12 +17,12 @@
         <el-table-column align="center" label="描述" prop="description" show-overflow-tooltip />
         <el-table-column align="center" label="操作">
           <template v-slot="{ row }">
-            <el-link type="warning" @click="openRoleDialog(row)" icon="el-icon-edit">修改</el-link>
+            <el-link type="warning" @click="openRoleDialog(row)">修改</el-link>
             <el-divider direction="vertical"></el-divider>
-            <el-link type="success" @click="openPermissionDrawer(row)" icon="el-icon-edit">权限</el-link>
+            <el-link type="success" @click="openPermissionDrawer(row)">权限</el-link>
             <el-divider direction="vertical"></el-divider>
-            <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="delRole(row)">
-              <el-link type="danger" slot="reference" icon="el-icon-delete">删除</el-link>
+            <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="handleDelete(row)">
+              <el-link type="danger" slot="reference">删除</el-link>
             </el-popconfirm>
           </template>
         </el-table-column>
@@ -93,6 +93,8 @@ export default {
   components: {},
   data() {
     return {
+      /** 表格加载遮罩层 */
+      loading: true,
       roleId: null,
       showPermissionDrawer: false,
       permissionData: [],
@@ -140,25 +142,27 @@ export default {
       this.showPermissionDrawer = false
     },
 
-    /** 获取-分页查询角色列表 */
-    async getRoleList() {
+    /** 查询角色列表 */
+    async getList() {
+      this.loading = true
       const { pageNo: page, pageSize: pagesize } = this
       const { data } = await getRoleList({ page, pagesize })
       this.total = data.total
       this.list = data.rows
+      this.loading = false
     },
 
     /** currentPage 改变时会触发 */
     changePageNo(pageNo) {
       this.pageNo = pageNo
-      this.getRoleList()
+      this.getList()
     },
 
     /** pageSize 改变时会触发 */
     changePageSize(pageSize) {
       this.pageSize = pageSize
       this.pageNo = 1
-      this.getRoleList()
+      this.getList()
     },
 
     /** 关闭前的回调，会暂停 Dialog 的关闭 */
@@ -173,7 +177,7 @@ export default {
       try {
         await this.$refs.roleFormRef.validate()
         this.roleForm.id ? await updateRole(this.roleForm) : await addRole(this.roleForm)
-        this.getRoleList()
+        this.getList()
         this.$message.success(`${this.dialogTitle}成功`)
         this.onClose()
       } catch (error) {
@@ -193,7 +197,7 @@ export default {
         await addRole(data)
         console.log(`测试角色 ${timestamp} 添加完成`)
       }
-      this.getRoleList()
+      this.getList()
       this.$message.success(`随机数据添加成功`)
     },
 
@@ -210,11 +214,11 @@ export default {
       }
     },
 
-    /** 删除角色 */
-    async delRole(record) {
+    /** 删除按钮操作 */
+    async handleDelete(record) {
       await delRole(record.id)
       if (this.list.length === 1 && this.pageNo > 1) this.pageNo--
-      this.getRoleList()
+      this.getList()
       this.$message.success(`角色删除成功`)
     },
 
@@ -226,7 +230,7 @@ export default {
     },
   },
   created() {
-    this.getRoleList() // 获取-分页查询角色列表
+    this.getList() // 获取-分页查询角色列表
   },
 }
 </script>

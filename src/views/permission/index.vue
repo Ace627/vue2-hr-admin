@@ -1,8 +1,10 @@
 <template>
   <div class="app-content">
-    <el-button class="mb-16" size="mini" type="primary" @click="addPermission(0, 1)">添加权限</el-button>
+    <nav class="mb-16">
+      <el-button size="mini" plain type="primary" icon="el-icon-plus" @click="handleAdd(0, 1)">添加权限</el-button>
+    </nav>
 
-    <el-table default-expand-all :data="list" row-key="id" :tree-props="{ children: 'children' }">
+    <el-table v-loading="loading" default-expand-all :data="list" row-key="id" :tree-props="{ children: 'children' }">
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="code" label="权限标识" />
       <el-table-column label="状态">
@@ -14,9 +16,13 @@
       <el-table-column prop="description" label="权限描述" />
       <el-table-column label="操作">
         <template v-slot="{ row }">
-          <el-button v-if="row.type === 1" type="text" @click="addPermission(row.id, 2)">添加</el-button>
-          <el-button type="text" @click="editPermission(row.id)">编辑</el-button>
-          <el-button type="text" @click="delPermission(row.id)">删除</el-button>
+          <el-link v-if="row.type === 1" type="primary" @click="handleAdd(row, 2)">新增</el-link>
+          <el-divider direction="vertical"></el-divider>
+          <el-link type="warning" @click="handleUpdate(row)">编辑</el-link>
+          <el-divider direction="vertical"></el-divider>
+          <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="handleDelete(row)">
+            <el-link type="danger" slot="reference">删除</el-link>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -57,6 +63,8 @@ export default {
   components: {},
   data() {
     return {
+      /** 表格加载遮罩层 */
+      loading: true,
       list: [],
       formData: {
         name: '', // 名称
@@ -79,14 +87,32 @@ export default {
     },
   },
   methods: {
-    async getPermissionList() {
+    /** 查询权限列表 */
+    async getList() {
+      this.loading = true
       const { data } = await getPermissionList()
       this.list = transListToTreeData(data, 0) // 将列表数据转化成树形结构
+      this.loading = false
     },
 
-    addPermission(pid, type) {
-      this.formData.pid = pid
+    /** 新增按钮操作 */
+    handleAdd(row, type) {
+      this.formData.pid = row.id
       this.formData.type = type
+      this.showDialog = true
+    },
+
+    /** 删除按钮操作 */
+    async handleDelete(row) {
+      await delPermission(row.id)
+      this.getList()
+      this.$message.success('删除成功')
+    },
+
+    /** 编辑按钮操作 */
+    async handleUpdate(row) {
+      const { data } = await getPermissionDetail(row.id)
+      this.formData = data
       this.showDialog = true
     },
 
@@ -102,7 +128,7 @@ export default {
         .then(() => {
           //  提示消息
           this.$message.success('新增成功')
-          this.getPermissionList()
+          this.getList()
           this.showDialog = false
         })
     },
@@ -118,28 +144,9 @@ export default {
       this.$refs.perForm.resetFields()
       this.showDialog = false
     },
-
-    async editPermission(id) {
-      // 根据获取id获取详情
-      const { data } = await getPermissionDetail(id)
-      this.formData = data
-      this.showDialog = true
-    },
-
-    // 删除操作
-    async delPermission(id) {
-      try {
-        await this.$confirm('确定要删除该数据吗')
-        await delPermission(id)
-        this.getPermissionList()
-        this.$message.success('删除成功')
-      } catch (error) {
-        console.log(error)
-      }
-    },
   },
   created() {
-    this.getPermissionList() // 获取权限列表
+    this.getList() // 查询权限列表
   },
 }
 </script>

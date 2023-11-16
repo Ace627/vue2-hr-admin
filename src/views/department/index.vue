@@ -12,9 +12,13 @@
       <el-table-column align="center" label="部门简介" prop="introduce" />
       <el-table-column align="center" label="操作">
         <template v-slot="{ row }">
-          <el-button type="text" @click="handleAdd(row)">新增</el-button>
-          <el-button type="text" @click="handleUpdate(row)">编辑</el-button>
-          <el-button type="text" @click="handleDelete(row)">删除</el-button>
+          <el-link type="primary" @click="handleAdd(row)">新增</el-link>
+          <el-divider direction="vertical"></el-divider>
+          <el-link type="warning" @click="handleUpdate(row)">编辑</el-link>
+          <el-divider direction="vertical"></el-divider>
+          <el-popconfirm :title="`是否确认删除部门 “${row.name}”`" @confirm="handleDelete(row)">
+            <el-link type="danger" slot="reference">删除</el-link>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -73,20 +77,14 @@ export default {
     /** 新增按钮操作 */
     handleAdd(row) {
       this.currentNodeId = row.id
-      console.log(' this.currentNodeId: ', this.currentNodeId)
       this.showDialog = true
     },
 
     /** 删除按钮操作 */
     async handleDelete(row) {
-      try {
-        await this.$confirm('此操作将永久删除该部门, 是否继续?', '系统提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
-        await delDepartment(row.id)
-        await this.getDepartment()
-        this.$message.success('删除部门成功')
-      } catch (error) {
-        console.log('error: ', error)
-      }
+      await delDepartment(row.id)
+      await this.getDepartment()
+      this.$message.success('删除部门成功')
     },
 
     /** 编辑按钮操作 */
