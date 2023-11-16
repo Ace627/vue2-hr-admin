@@ -16,8 +16,10 @@
       <el-table-column prop="description" label="权限描述" />
       <el-table-column label="操作">
         <template v-slot="{ row }">
-          <el-link v-if="row.type === 1" type="primary" @click="handleAdd(row, 2)">新增</el-link>
-          <el-divider direction="vertical"></el-divider>
+          <template v-if="row.type === 1">
+            <el-link type="primary" @click="handleAdd(row, 2)">新增</el-link>
+            <el-divider direction="vertical"></el-divider>
+          </template>
           <el-link type="warning" @click="handleUpdate(row)">编辑</el-link>
           <el-divider direction="vertical"></el-divider>
           <el-popconfirm :title="`是否确认删除角色 “${row.name}”`" @confirm="handleDelete(row)">
