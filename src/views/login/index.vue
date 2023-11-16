@@ -108,6 +108,9 @@ export default {
         background: #f4f5fb;
       }
     }
+    .el-button {
+      width: 350px;
+    }
     .el-checkbox {
       color: #606266;
     }
